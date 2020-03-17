@@ -1,0 +1,36 @@
+body
+{
+	margin: 0;
+	background-color: #666666;
+	color: #efefef;
+    font-family: 'Baloo Paaji 2', cursive;
+    font-size: 17px;
+}
+
+#title
+{
+	margin-left: auto;
+	margin-rifht: auto;
+	margin-top: 60px;
+	margin-bottom: 15px;
+	height: 60px;
+	text-align: center;
+	font-size: 55px;
+	color: #ffffff;
+	font-weight: 700;
+}
+
+#logo
+{
+	font-size: 55px;
+	color: #ffffff;
+	font-family: 'Fredoka One', cursive;
+}
+
+#subtitle
+{
+	text-align: center;
+	font-size: 17px;
+	color: #ffffff;
+	letter-spacing: 3px;
+}

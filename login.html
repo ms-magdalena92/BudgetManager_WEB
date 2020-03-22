@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+
+	<meta charset="utf-8">
+	<title>MyBudget - Your Personal Finance Manager</title>
+	<meta name="description" content="Track your income and expenses - avoid overspending!">
+	<meta name="keywords" content="expense manager, budget planner, expense tracker, budgeting app, money manager, money management, personal finance management software, finance manager, saving planner">
+	<meta name="author" content="Magdalena Słomiany">
+	
+	<meta http-equiv="X-Ua-Compatible" content="IE=edge">
+	
+	<link rel="stylesheet" href="main.css">
+	<link rel="stylesheet" href="css/fontello.css">
+	<link href="https://fonts.googleapis.com/css?family=Baloo+Paaji+2:400,700|Fredoka+One|Roboto:400,700|Varela+Round&display=swap&subset=latin-ext" rel="stylesheet">
+	
+</head>
+
+<body>
+	<header>
+	
+		<div id="title"><a id="homeButton" href="index.html" role="button"><span id="logo">MyBudget</span>.com</a></div>
+		<div id="subtitle">Your Personal Finance Manager</div>
+	
+	</header>
+	
+	<main>
+	
+		<section class="square">
+			
+			<form class="signForm" action="action_page.php" method="post">
+				<div class="input">
+					<div class="inputIcon">
+						<i class="icon-lock"></i>
+					</div>
+					<div class="inputForm">
+						<input type="email" id="loginInput" placeholder="email@address.com">
+					</div>
+					<div style="clear:both;"></div>
+				</div>
+				<div class="input">
+					<div class="inputIcon">
+						<i class="icon-user"></i>
+					</div>
+					<div class="inputForm">
+						<input type="password" id="passwordInput" placeholder="password">
+					</div>
+					<div style="clear:both;"></div>
+					<div id="passwordCheck"><input type="checkbox" onclick="showPassword()"> Show password</div>
+				</div>
+				<a class="signButton" href="login.html" role="button">
+					<i class="icon-login"></i> Sign in
+				</a>
+			<form>
+		
+		</section>
+		
+	</main>
+	
+	<footer>
+			
+			2020 &copy myBudget.com
+	
+	</footer>
+	
+</body>
+</html>

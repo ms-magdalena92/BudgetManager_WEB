@@ -1,4 +1,7 @@
 
 .icon-login:before { content: '\e800'; } /* '' */
 .icon-logout:before { content: '\e801'; } /* '' */
+.icon-user:before { content: '\e802'; } /* '' */
+.icon-lock:before { content: '\e803'; } /* '' */
+.icon-mail-alt:before { content: '\f0e0'; } /* '' */
 .icon-user-plus:before { content: '\f234'; } /* '' */

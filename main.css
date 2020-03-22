@@ -170,29 +170,29 @@ footer
 	margin-left: auto;
 	margin-right: auto;
 	padding: 20px;
-	background-color: white;
+	background-color: rgba(255, 255, 255, 0.3);
 	width: 600px;
 	text-align: center;
 	border-radius: 20px;
 }
 
-
 input[type=email],
-input[type=password]
+input[type=password],
+input[type=text]
 {
 	font-size: 20px;
 	width: 300px;
-	background-color: #efefef;
+	background-color: white;
 	color: #666666;
-	border: 2px solid #ddd;
+	border: 2px solid #cccccc;
 	border-radius: 5px;
 	padding: 10px;
 	box-sizing: border-box;
-	outline: none;
 }
 
 input[type=email]:focus,
-input[type=password]:focus
+input[type=password]:focus,
+input[type=text]:focus
 {
 	-webkit-box-shadow: 0px 0px 7px 0px rgba(17,109,247,1);
 	-moz-box-shadow: 0px 0px 7px 0px rgba(17,109,247,1);
@@ -211,9 +211,9 @@ input[type=password]:focus
 	width: 30px;
 	float: left;
 	font-size: 20px;
-	background-color: #efefef;
+	background-color: white;
 	color: #666666;
-	border: 2px solid #ddd;
+	border: 2px solid #cccccc;
 	border-radius: 5px;
 	padding: 10px;
 }

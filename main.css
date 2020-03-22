@@ -115,7 +115,6 @@ figcaption
 	float: left;
 	width: 352.5px;
 	height: 130px;
-	/*background-color: white;*/
 	/* Background pattern from Toptal Subtle Patterns */
 	background-image: url("img/country-quilt.png");
 	margin-left: 25px;
@@ -137,8 +136,6 @@ figcaption
 .signButton
 {
 	display: inline-block;
-	vertical-align: middle;
-	align: center;
 	font-size: 19px;
 	background-color: #00b300;
 	width: 200px;

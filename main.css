@@ -73,13 +73,12 @@ p
 	float: left;
 	width: 150px;
 	height: 150px;
-	background-color: #a6a6a6;
+	background-color: rgba(51, 51, 51, 0.3);
 	margin-left: 25px;
 	margin-right: 25px;
 	border-radius: 5px;
 	line-height: 1;
 	font-size: 15px;
-	opacity: 0.85;
 	-webkit-box-shadow: 9px 9px 11px -8px rgba(107,108,110,1);
 	moz-box-shadow: 9px 9px 11px -8px rgba(107,108,110,1);
 	box-shadow: 9px 9px 11px -8px rgba(107,108,110,1);
@@ -87,11 +86,11 @@ p
 
 .tile:hover
 {
-	background-color: #8c8c8c;
-	opacity: 1;
+	background-color: #7b7b7b;
 }
 
 figure
+
 {
 	margin: 10px;
 }
@@ -145,10 +144,12 @@ figcaption
 	-webkit-box-shadow: 9px 9px 11px -8px rgba(107,108,110,1);
 	moz-box-shadow: 9px 9px 11px -8px rgba(107,108,110,1);
 	box-shadow: 9px 9px 11px -8px rgba(107,108,110,1);
+	border-style: none;
 }
 
 .signButton:hover
 {
+	cursor: pointer;
 	background-color: #009900;
 	opacity: 1;
 }

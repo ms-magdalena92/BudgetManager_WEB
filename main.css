@@ -145,10 +145,12 @@ figcaption
 	-webkit-box-shadow: 9px 9px 11px -8px rgba(107,108,110,1);
 	moz-box-shadow: 9px 9px 11px -8px rgba(107,108,110,1);
 	box-shadow: 9px 9px 11px -8px rgba(107,108,110,1);
+	border-style: none;
 }
 
 .signButton:hover
 {
+	cursor: pointer;
 	background-color: #009900;
 	opacity: 1;
 }

@@ -28,13 +28,13 @@
 	
 		<section class="square">
 			
-			<form class="signForm" action="action_page.php" method="post">
+			<form class="signForm" action="menu.html" method="post">
 				<div class="input">
 					<div class="inputIcon">
 						<i class="icon-mail-alt"></i>
 					</div>
 					<div class="inputForm">
-						<input type="email" id="loginInput" placeholder="email@address.com">
+						<input type="email" id="loginInput" placeholder="email@address.com" required>
 					</div>
 					<div style="clear:both;"></div>
 				</div>
@@ -43,14 +43,14 @@
 						<i class="icon-lock"></i>
 					</div>
 					<div class="inputForm">
-						<input type="password" id="passwordInput" placeholder="password">
+						<input type="password" id="passwordInput" placeholder="password" required>
 					</div>
 					<div style="clear:both;"></div>
 					<div id="passwordCheck"><input type="checkbox" onclick="showPassword()"> Show password</div>
 				</div>
-				<a class="signButton" href="#" role="button">
+				<button class="signButton" type="submit">
 					<i class="icon-login"></i> Sign in
-				</a>
+				</button>
 			<form>
 		
 		</section>

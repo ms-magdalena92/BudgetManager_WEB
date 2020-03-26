@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+
+	<meta charset="utf-8">
+	<title>MyBudget - Your Personal Finance Manager</title>
+	<meta name="description" content="Track your income and expenses - avoid overspending!">
+	<meta name="keywords" content="expense manager, budget planner, expense tracker, budgeting app, money manager, money management, personal finance management software, finance manager, saving planner">
+	<meta name="author" content="Magdalena Słomiany">
+	
+	<meta http-equiv="X-Ua-Compatible" content="IE=edge">
+	
+	<link rel="stylesheet" href="main.css">
+	<link rel="stylesheet" href="css/fontello.css">
+	<link href="https://fonts.googleapis.com/css?family=Baloo+Paaji+2:400,700|Fredoka+One|Roboto:400,700|Varela+Round&display=swap&subset=latin-ext" rel="stylesheet">
+	
+</head>
+
+<body onload="getCurrentDate()">
+	<header>
+	
+		<div id="title"><a id="homeButton" href="index.html" role="button"><span id="logo">MyBudget</span>.com</a></div>
+		<div id="subtitle">Your Personal Finance Manager</div>
+	
+	</header>
+	
+	<main>
+	
+		<section class="square">
+			
+			<nav id="mainMenu">
+			
+				<ol>
+					<li><a href="main.html">Home</a></li>
+					<li><a href="income.html">Add Income</a></li>
+					<li><a style="font-weight:700;" href="expense.html">Add Expense</a></li>
+					<li><a href="balance.html">View Balance</a></li>
+					<li><a href="settings.html">Settings</a></li>
+					<li><a href="index.html">Sign out</a></li>
+				</ol>
+			
+			</nav>
+		
+		</section>
+		
+		<section class="square">
+		
+			<form action="login.html" method="post">
+				
+				<p>Add an Expense</p>
+				
+				<div class="input">
+					<label for="expenseInput">Amount</label>
+					<input class="labeledInput" type="number" id="expenseInput" step="0.01" required>
+				</div>
+				
+				<div class="input">
+					<label for="dateInput">Date</label><input class="labeledInput" type="date" id="dateInput"s required>
+				</div>
+				
+				<div class="input">
+					<label for="paymentMethod">Payment Method</label>
+					<select class="labeledInput" id="paymentMethod" required>
+						<option>cash</option>
+						<option>debit card</option>
+						<option>credit card</option>
+					</select>
+				</div>
+				
+				<div class="input">
+					<label for="expenseCategory">Category</label>
+					<select class="labeledInput" id="expenseCategory" required>
+						<option>food</option>
+						<option>house</option>
+						<option>transport</option>
+						<option>telecom</option>
+						<option>healthcare</option>
+						<option>clothing</option>
+						<option>hygiene</option>
+						<option>kids</option>
+						<option>entertainment</option>
+						<option>trip</option>
+						<option>trainings</option>
+						<option>books</option>
+						<option>savings</option>
+						<option>old age pension</option>
+						<option>debt repayment</option>
+						<option>donation</option>
+						<option>other</option>
+					</select>
+				</div>
+				
+				<div class="input">
+					<label for="comment">Commments (optional)</label>
+					<textarea class="labeledInput" id="comment" rows="5"></textarea>
+				</div>
+	
+				<button type="submit">Save</button>
+				<button type="submit">Cancel</button>
+			</form>
+		
+		</section>
+		
+	</main>
+	
+	<footer>
+			
+			2020 &copy myBudget.com
+	
+	</footer>
+	
+	<script src="budget.js"></script>
+	
+</body>
+</html>

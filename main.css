@@ -243,7 +243,6 @@ ol > li
 }
 
 ol > li:hover
-
 {
 	background-color: #66b3ff;
 	cursor: pointer;

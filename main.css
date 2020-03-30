@@ -370,3 +370,94 @@ button:hover
 	cursor: pointer;
 	background-color: #0077b3;
 }
+
+#tables
+{
+	width: 1050px;
+	margin-left: auto;
+	margin-right: auto;
+}
+
+.tableIncomes,
+.tableExpenses
+{
+	float: left;
+}
+
+table
+{
+	table-layout: fixed;
+	background-color: rgba(255, 255, 255, 0.7);
+	width: 465px;
+	margin: 25px;
+	border: 2px solid #b3b3b3;
+	border-radius: 10px;
+	border-collapse:separate; 
+	border-spacing: 0 8px;
+}
+
+caption
+{
+	background-color: rgba(255, 255, 255, 0.3);
+	border: 2px solid #b3b3b3;
+	border-radius: 10px;
+	color: #0099e6;
+	padding: 3px;
+	margin-bottom: 10px;
+	font-size: 22px;
+	font-weight: 700;
+	text-transform: uppercase;
+	letter-spacing: 1px;
+}
+
+th
+{
+	text-align: left;
+	padding-left: 5px;
+	color: #006699;
+	font-size: 18px;
+	overflow: hidden;
+	overflow-wrap: normal;
+}
+
+th.category,
+th.amount
+{
+	width: 100px;
+}
+
+td
+{
+	text-align: left;
+	padding-left: 7px;
+	font-size: 14px;
+	overflow: hidden;
+	overflow-wrap: normal;
+	border-right: 1px dotted black;
+}
+
+td.comment
+{
+	border: none;
+}
+
+td.category,
+td.sum,
+td.total
+{
+	font-size: 16px;
+	font-weight: 700;
+	border: none;
+}
+
+.amount,
+td.sum
+{
+	text-align: right;
+	padding-right: 7px;
+}
+
+tr:last-child
+{
+	color: #2eb82e;
+}

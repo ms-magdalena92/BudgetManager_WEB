@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+
+	<meta charset="utf-8">
+	<title>MyBudget - Your Personal Finance Manager</title>
+	<meta name="description" content="Track your income and expenses - avoid overspending!">
+	<meta name="keywords" content="expense manager, budget planner, expense tracker, budgeting app, money manager, money management, personal finance management software, finance manager, saving planner">
+	<meta name="author" content="Magdalena Słomiany">
+	
+	<meta http-equiv="X-Ua-Compatible" content="IE=edge">
+	
+	<link rel="stylesheet" href="main.css">
+	<link rel="stylesheet" href="css/fontello.css">
+	<link href="https://fonts.googleapis.com/css2?family=Baloo+Paaji+2:wght@400;500;700&family=Fredoka+One&family=Roboto:wght@400;700;900&family=Varela+Round&display=swap" rel="stylesheet">
+	
+</head>
+
+<body onload = "generateExampleTables();">
+	<header>
+	
+		<div id="title"><a id="homeButton" href="index.html" role="button"><span id="logo">MyBudget</span>.com</a></div>
+		<div id="subtitle">Your Personal Finance Manager</div>
+	
+	</header>
+	
+	<main>
+	
+		<section class="square">
+			
+			<nav id="mainMenu">
+			
+				<ol>
+					<li><a href="menu.html"><i class="icon-home"></i> Home</a></li>
+					<li><a href="income.html"><i class="icon-money-1"></i> Add Income</a></li>
+					<li><a href="expense.html"><i class="icon-dollar"></i> Add Expense</a></li>
+					<li class="disabled"><a><i class="icon-chart-pie"></i> View Balance</a>
+						<ul>
+							<li><a href="#">Current Month</a></li>
+							<li><a href="#">Last Month</a></li>
+							<li><a href="#">Current Year</a></li>
+							<li><a href="#">Custom</a></li>
+						</ul>
+					</li>
+					<li><a><i class="icon-cog-alt"></i> Settings</a>
+						<ul>
+							<li><a href="#">Profile</a></li>
+							<li><a href="#">Income Category</a></li>
+							<li><a href="#">Expense Category</a></li>
+						</ul>
+					</li>
+					<li><a href="index.html"><i class="icon-logout"></i> Sign out</a></li>
+				</ol>
+			
+			</nav>
+		
+		</section>
+		
+		<section class="square">
+		
+			<div id="tables">
+				<div class="tableIncomes"></div>
+				<div class="tableExpenses"></div>
+				<div style="clear:both;"></div>
+			</div>
+		
+		</section>
+		
+	</main>
+	
+	<footer>
+			
+			2020 &copy myBudget.com
+	
+	</footer>
+	
+	<script src="budget.js"></script>
+	
+</body>
+</html>

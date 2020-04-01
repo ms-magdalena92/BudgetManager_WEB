@@ -301,6 +301,7 @@ ol > li > ul > li
 	width: 180px;
 	height: 40px;
 	background-color: rgba(255, 255, 255, 0.9);
+	position: sticky;
 	z-index: 1;
 	border: 1px solid #bfbfbf;
 	border-radius: 10px;

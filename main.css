@@ -44,6 +44,7 @@ p
 
 .square
 {
+	text-align: center;
 	margin-bottom: 20px;
 	padding-top: 15px;
 	padding-bottom: 20px;
@@ -229,7 +230,6 @@ form
 	margin-top: 10px;
 }
 
-
 ol
 {
 	position: relative;
@@ -374,8 +374,7 @@ button:hover
 #tables
 {
 	width: 1050px;
-	margin-left: auto;
-	margin-right: auto;
+	margin: 0 auto;
 }
 
 .tableIncomes,
@@ -418,6 +417,7 @@ th
 	font-size: 18px;
 	overflow: hidden;
 	overflow-wrap: normal;
+	border-bottom: 2px solid #b3b3b3;
 }
 
 th.category,
@@ -441,9 +441,7 @@ td.comment
 	border: none;
 }
 
-td.category,
-td.sum,
-td.total
+tr.summary > td
 {
 	font-size: 16px;
 	font-weight: 700;
@@ -460,4 +458,35 @@ td.sum
 tr:last-child
 {
 	color: #2eb82e;
+}
+
+#balance
+{
+	float: left;
+	
+}
+
+#result
+{
+	float: left;
+	margin-left: 15px;
+}
+
+#resultText
+{
+	margin: 0px;
+}
+
+.box
+{
+	display: inline-block;
+	margin: 10px;
+	font-size: 26px;
+	font-weight: 700;
+	letter-spacing: 1px;
+	text-align: center;
+	background-color: rgba(255, 255, 255, 0.7);
+	border: 2px solid #b3b3b3;
+	border-radius: 10px;
+	padding: 5px 40px;
 }

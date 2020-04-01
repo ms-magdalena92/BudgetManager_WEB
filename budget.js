@@ -29,7 +29,7 @@ function generateExampleTables()
 	var incomeCategories = ["salary", "allegro", "bank interest"];
 	var expenseCategories = ["food", "house", "transport"];
 
-	var incomes = [{amount: 4500, date: "2019-03-11", category: "salary", comment: "-"}, {amount: 100, date: "2019-03-09", category: "allegro", comment: "shoes"}, {amount: 200, date: "2019-03-02", category: "allegro", comment: "-"}, {amount: 200, date: "2019-03-01", category: "allegro", comment: "-"}, {amount: 15, date: "2019-03-15", category: "bank interest", comment: "investment"}];
+	var incomes = [{amount: 4500, date: "2019-03-11", category: "salary", comment: "-"}, {amount: 100, date: "2019-03-09", category: "allegro", comment: "shoes"}, {amount: 200, date: "2019-03-02", category: "allegro", comment: "-"}, {amount: 200, date: "2019-03-01", category: "allegro", comment: "-"}, {amount: 50, date: "2019-03-15", category: "bank interest", comment: "investment"}];
 
 	var expenses = [{amount: 354, payment: "cash", date: "2019-03-01", category: "food", comment: "-"}, {amount: 655, payment: "debit card", date: "2019-03-08", category: "house", comment: "rent"}, {amount: 150, payment: "cash", date: "2019-03-05", category: "transport", comment: "-"}, {amount: 200, payment: "cash", date: "2019-03-29", category: "food", comment: "-"}];
 
@@ -142,4 +142,72 @@ function generateExampleTables()
 		$('#resultText').css('color', '#cc0000');
 		document.querySelector("#resultText").insertAdjacentHTML("beforeend", "Watch Out! You Are Getting Into Debt!");
 	}
+}
+
+function generateExampleChart1()
+{
+	google.charts.load('current', {'packages':['corechart']});
+    google.charts.setOnLoadCallback(drawChart);
+
+    function drawChart() {
+
+	var data = google.visualization.arrayToDataTable([
+          ['Category', 'Amount'],
+          ['salary',     4500],
+          ['allegro',      500],
+          ['bank interest',  50]
+        ]);
+
+        var options = {
+          title: 'Source of Income',
+		  width: 400,
+		  height: 400,
+		  colors: ['#00e64d', '#66ff99', '#b3ffcc'],
+		  backgroundColor: { fill:'transparent' },
+		  chartArea:{left:20,top:50,width:'100%',height:'100%'},
+		  fontSize: 17
+		  
+        };
+
+        var chart = new google.visualization.PieChart(document.getElementById('piechart1'));
+
+        chart.draw(data, options);
+      }
+}
+
+function generateExampleChart2()
+{
+	google.charts.load('current', {'packages':['corechart']});
+    google.charts.setOnLoadCallback(drawChart);
+
+    function drawChart() {
+
+	var data = google.visualization.arrayToDataTable([
+          ['Category', 'Amount'],
+          ['house',     655],
+          ['food',      554],
+          ['transport',  150]
+        ]);
+
+        var options = {
+          title: 'Spendings',
+		  width: 400,
+		  height: 400,
+		  colors: ['#ff3333', '#ff6666', '#ffb3b3'],
+		  backgroundColor: { fill:'transparent' },
+		  chartArea:{left:20,top:50,width:'100%',height:'100%'},
+		  fontSize: 17
+        };
+
+        var chart = new google.visualization.PieChart(document.getElementById('piechart2'));
+
+        chart.draw(data, options);
+      }
+}
+
+function pageLoad()
+{
+	generateExampleTables();
+	generateExampleChart1();
+	generateExampleChart2();
 }

@@ -464,7 +464,6 @@ tr:last-child
 #balance
 {
 	float: left;
-	
 }
 
 #result
@@ -476,6 +475,7 @@ tr:last-child
 #resultText
 {
 	margin: 0px;
+	margin-bottom: 20px;
 }
 
 .box
@@ -516,4 +516,10 @@ div.timePeriod > h1
 	font-weight: 400;
 	font-size: 26px;
 	letter-spacing: 2px;
+}
+
+#piechart1,
+#piechart2
+{
+	float: left;
 }

@@ -13,10 +13,10 @@
 	<link rel="stylesheet" href="main.css">
 	<link rel="stylesheet" href="css/fontello.css">
 	<link href="https://fonts.googleapis.com/css2?family=Baloo+Paaji+2:wght@400;500;700&family=Fredoka+One&family=Roboto:wght@400;700;900&family=Varela+Round&display=swap" rel="stylesheet">
-	
+
 </head>
 
-<body>
+<body onload="pageLoad();">
 	<header>
 	
 		<div id="title"><a id="homeButton" href="index.html" role="button"><span id="logo">MyBudget</span>.com</a></div>
@@ -31,12 +31,12 @@
 			<nav id="mainMenu">
 			
 				<ol>
-					<li class="disabled"><a href="main.html"><i class="icon-home"></i> Home</a></li>
+					<li><a href="menu.html"><i class="icon-home"></i> Home</a></li>
 					<li><a href="income.html"><i class="icon-money-1"></i> Add Income</a></li>
 					<li><a href="expense.html"><i class="icon-dollar"></i> Add Expense</a></li>
-					<li><a><i class="icon-chart-pie"></i> View Balance</a>
+					<li class="disabled"><a><i class="icon-chart-pie"></i> View Balance</a>
 						<ul>
-							<li><a href="balance.html">Current Month</a></li>
+							<li><a href="#">Current Month</a></li>
 							<li><a href="#">Last Month</a></li>
 							<li><a href="#">Current Year</a></li>
 							<li><a href="#">Custom</a></li>
@@ -57,10 +57,39 @@
 		</section>
 		
 		<section class="square">
-		
-			<img src="img/menuBG.png" width="360" height="360" alt="" />
-		
+			
+			
+			<div class="timePeriod">
+				<h1>CURRENT MONTH</h1>
+				<ol id="dateButton">
+					<li><a><i class="icon-calendar"></i> Choose Date</a>
+						<ul>
+							<li><a href="#">Current Month</a></li>
+							<li><a href="#">Last Month</a></li>
+							<li><a href="#">Current Year</a></li>
+							<li><a href="#">Custom</a></li>
+						</ul>
+					</li>
+				</ol>
+			</div>
+			
+			<div id="tables">
+				<div class="tableIncomes"></div>
+				<div class="tableExpenses"></div>
+				<div style="clear:both;"></div>
+				</div>
+			<div class="box">
+				<div id="balance">BALANCE:</div><div id="result"></div>
+				<div style="clear:both;"></div>
+			</div>
+			<h3 id="resultText"></h3>
+			<div class="box">
+				<div id="piechart1"></div>
+				<div id="piechart2"></div>
+				<div style="clear:both;"></div>
+			</div>
 		</section>
+		
 		
 	</main>
 	
@@ -71,6 +100,7 @@
 	</footer>
 	
 	<script src="budget.js"></script>
-	
+	<script src="jquery-3.4.1.min.js"></script>
+	<script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
 </body>
 </html>

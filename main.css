@@ -44,6 +44,7 @@ p
 
 .square
 {
+	text-align: center;
 	margin-bottom: 20px;
 	padding-top: 15px;
 	padding-bottom: 20px;
@@ -231,6 +232,7 @@ form
 
 ol
 {
+	position: relative;
 	padding: 0;
 	margin: 0;
 	list-style-type: none;
@@ -243,7 +245,7 @@ ol > li
 {
 	display: inline-block;
 	background-color: rgba(255, 255, 255, 0.3);
-	width: 200px;
+	width: 180px;
 	height: 40px;
 	margin-left: 5px;
 	margin-right: 5px;
@@ -277,6 +279,38 @@ ol a
 ol a:hover
 {
 	color: #404040;
+}
+
+ol > li > ul
+{
+	
+	list-style-type: none;
+	padding: 0;
+	margin: 0;
+	display: none;
+	position: absolute;
+}
+
+ol > li:hover > ul
+{
+	display: block;
+}
+
+ol > li > ul > li
+{
+	width: 180px;
+	height: 40px;
+	background-color: rgba(255, 255, 255, 0.9);
+	position: sticky;
+	z-index: 1;
+	border: 1px solid #bfbfbf;
+	border-radius: 10px;
+}
+
+ol > li > ul > li:hover
+{
+	background-color: rgba(102, 179, 255, 0.9);
+	color: #595959;
 }
 
 .labeledInput
@@ -336,4 +370,156 @@ button:hover
 {
 	cursor: pointer;
 	background-color: #0077b3;
+}
+
+#tables
+{
+	width: 1050px;
+	margin: 0 auto;
+}
+
+.tableIncomes,
+.tableExpenses
+{
+	float: left;
+}
+
+table
+{
+	table-layout: fixed;
+	background-color: rgba(255, 255, 255, 0.7);
+	width: 465px;
+	margin: 25px;
+	border: 2px solid #b3b3b3;
+	border-radius: 10px;
+	border-collapse:separate; 
+	border-spacing: 0 8px;
+}
+
+caption
+{
+	background-color: rgba(255, 255, 255, 0.3);
+	border: 2px solid #b3b3b3;
+	border-radius: 10px;
+	color: #0099e6;
+	padding: 3px;
+	margin-bottom: 10px;
+	font-size: 22px;
+	font-weight: 700;
+	text-transform: uppercase;
+	letter-spacing: 1px;
+}
+
+th
+{
+	text-align: left;
+	padding-left: 5px;
+	color: #006699;
+	font-size: 18px;
+	overflow: hidden;
+	overflow-wrap: normal;
+	border-bottom: 2px solid #b3b3b3;
+}
+
+th.category,
+th.amount
+{
+	width: 100px;
+}
+
+td
+{
+	text-align: left;
+	padding-left: 7px;
+	font-size: 14px;
+	overflow: hidden;
+	overflow-wrap: normal;
+	border-right: 1px dotted black;
+}
+
+td.comment
+{
+	border: none;
+}
+
+tr.summary > td
+{
+	font-size: 16px;
+	font-weight: 700;
+	border: none;
+}
+
+.amount,
+td.sum
+{
+	text-align: right;
+	padding-right: 7px;
+}
+
+tr:last-child
+{
+	color: #2eb82e;
+}
+
+#balance
+{
+	float: left;
+}
+
+#result
+{
+	float: left;
+	margin-left: 15px;
+}
+
+#resultText
+{
+	margin: 0px;
+	margin-bottom: 20px;
+}
+
+.box
+{
+	display: inline-block;
+	margin: 10px;
+	font-size: 24px;
+	font-weight: 700;
+	letter-spacing: 1px;
+	text-align: center;
+	background-color: rgba(255, 255, 255, 0.7);
+	border: 2px solid #b3b3b3;
+	border-radius: 10px;
+	padding: 5px 40px;
+}
+
+#dateButton
+{
+	margin-top: 10px;
+	margin-right: 10px;
+	position: absolute;
+	top: 0;
+	right: 0;
+}
+
+.timePeriod
+{
+	padding: 15px 0;
+	width: 100%;
+	position: relative;
+	background-color: rgba(255, 255, 255, 0.2);
+	margin: 0px;
+}
+
+div.timePeriod > h1
+{
+	margin: 0px;
+	font-weight: 400;
+	font-size: 26px;
+	letter-spacing: 2px;
+}
+
+#piechart1,
+#piechart2
+{
+	float: left;
 }

@@ -10,6 +10,7 @@
 	
 	<meta http-equiv="X-Ua-Compatible" content="IE=edge">
 	
+	<link rel="stylesheet" href="css/bootstrap.min.css">
 	<link rel="stylesheet" href="main.css">
 	<link rel="stylesheet" href="css/fontello.css">
 	<link href="https://fonts.googleapis.com/css2?family=Baloo+Paaji+2:wght@400;500;700&family=Fredoka+One&family=Roboto:wght@400;700;900&family=Varela+Round&display=swap" rel="stylesheet">
@@ -17,99 +18,143 @@
 </head>
 
 <body onload="getCurrentDate()">
-	<header>
-	
-		<div id="title"><a id="homeButton" href="index.html" role="button"><span id="logo">MyBudget</span>.com</a></div>
-		<div id="subtitle">Your Personal Finance Manager</div>
-	
-	</header>
+	<main>
+		<div class="container">
+			<header class="row mx-5 justify-content-around">
+				<h1 class="mx-3" id="title"><a id="homeButton" href="index.html" role="button"><span id="logo">MyBudget</span>.com</a></h1>
+			</header>
+			<p id="subtitle">Your Personal Finance Manager</p>
+		</div>
 	
 	<main>
 	
-		<section class="square">
+		<section class="container-fluid square my-4 p-2">
 			
-			<nav id="mainMenu">
+			<nav class="navbar navbar-dark navbar-expand-lg">
 			
-				<ol>
-					<li><a href="menu.html"><i class="icon-home"></i> Home</a></li>
-					<li><a href="income.html"><i class="icon-money-1"></i> Add Income</a></li>
-					<li class="disabled"><a href="expense.html"><i class="icon-dollar"></i> Add Expense</a></li>
-					<li><a><i class="icon-chart-pie"></i> View Balance</a>
-						<ul>
-							<li><a href="#">Current Month</a></li>
-							<li><a href="#">Last Month</a></li>
-							<li><a href="#">Current Year</a></li>
-							<li><a href="#">Custom</a></li>
-						</ul>
-					</li>
-					<li><a><i class="icon-cog-alt"></i> Settings</a>
-						<ul>
-							<li><a href="#">Profile</a></li>
-							<li><a href="#">Income Category</a></li>
-							<li><a href="#">Expense Category</a></li>
-						</ul>
-					</li>
-					<li><a href="index.html"><i class="icon-logout"></i> Sign out</a></li>
-				</ol>
+				<button class="navbar-toggler bg-primary" type="button" data-toggle="collapse" data-target="#mainMenu" aria-controls="mainmenu" aria-expanded="false" aria-label="Przełącznik nawigacji">
+					<span class="navbar-toggler-icon"></span>
+				</button>
+				
+				<div class="collapse navbar-collapse" id="mainMenu">
+			
+					<ul class="navbar-nav mx-auto">
+						<li class="col-lg-2 nav-item">
+							<a class="nav-link" href="main.html"><i class="icon-home"></i> Home</a>
+						</li>
+						<li class="col-lg-2 nav-item">
+							<a class="nav-link" href="income.html"><i class="icon-money-1"></i> Add Income</a>
+						</li>
+						<li class="col-lg-2 nav-item disabled">
+							<a class="nav-link" href="expense.html"><i class="icon-dollar"></i> Add Expense</a>
+						</li>
+						<li class="col-lg-2 nav-item dropdown">
+							<a class="nav-link" href="#" role="button"><i class="icon-chart-pie"></i> View Balance</a>
+							<div class="dropdown-menu bg-transparent border-0 m-0 p-0" aria-labelledby="submenu">
+							
+								<a class="dropdown-item" href="balance.html">Current Month</a>
+								<a class="dropdown-item" href="#">Last Month</a>
+								<a class="dropdown-item" href="#">Current Year</a>
+								<a class="dropdown-item" href="#">Custom</a>
+							
+							</div>
+						</li>
+						<li class="col-lg-2 nav-item dropdown">
+							<a a class="nav-link" href="#" role="button"><i class="icon-cog-alt"></i> Settings</a>
+							<div class="dropdown-menu bg-transparent border-0 m-0 p-0" aria-labelledby="submenu">
+							
+								<h6 class="dropdown-header">Profile settings</h6>
+								<a class="dropdown-item" href="#">Name</a>
+								<a class="dropdown-item" href="#">Password</a>
+								<a class="dropdown-item" href="#">E-mail Adress</a>
+								<div class="dropdown-divider"></div>
+								<h6 class="dropdown-header">Category settings</h6>
+								<a class="dropdown-item" href="#">Income</a>
+								<a class="dropdown-item" href="#">Expense</a>
+								<a class="dropdown-item" href="#">Payment Methods</a>
+							
+							</div>
+						</li>
+						<li class="col-lg-2 nav-item">
+							<a class="nav-link" href="index.html"><i class="icon-logout"></i> Sign out</a>
+						</li>
+					</ul>
+					
+				</div>
 			
 			</nav>
-		
 		</section>
 		
-		<section class="square">
+		<section class="container-fluid square my-4 py-4 px-4">
 		
-			<form action="login.html" method="post">
+			<form class="col-sm-10 col-md-8 col-lg-6 p-3 mx-auto">
 				
-				<h3>ADD AN EXPENSE</h3>
+				<h3>ADDING AN EXPENSE</h3>
 				
-				<div class="input">
-					<label for="expenseInput">Amount</label>
-					<input class="labeledInput" type="number" id="expenseInput" step="0.01" required>
+				<div class="row justify-content-around">
+					<div class="col-10 col-lg-8">
+						<div class="input-group my-3">
+							<div class="input-group-prepend px-1">
+								<span class="input-group-text">Amount</span>
+							</div>
+							<input class="form-control userInput labeledInput" type="number" id="expenseInput" step="0.01" required>
+						</div>
+						<div class="input-group my-3">
+							<div class="input-group-prepend px-1">
+								<span class="input-group-text">Date</span>
+							</div>
+							<input class="form-control  userInput labeledInput" type="date" id="dateInput" required>
+						</div>
+						<div class="input-group my-3">
+							<div class="input-group-prepend px-1">
+								<span class="input-group-text">Payment Method</span>
+							</div>
+							<select class="form-control userInput labeledInput" id="paymentMethod">
+								<option>cash</option>
+								<option>debit card</option>
+								<option>credit card</option>
+							</select>
+						</div>
+						<div class="input-group my-3">
+							<div class="input-group-prepend px-1">
+								<span class="input-group-text">Category</span>
+							</div>
+							<select class="form-control userInput labeledInput" id="expenseCategory">
+								<option>food</option>
+								<option>house</option>
+								<option>transport</option>
+								<option>telecom</option>
+								<option>healthcare</option>
+								<option>clothing</option>
+								<option>hygiene</option>
+								<option>kids</option>
+								<option>entertainment</option>
+								<option>trip</option>
+								<option>trainings</option>
+								<option>books</option>
+								<option>savings</option>
+								<option>old age pension</option>
+								<option>debt repayment</option>
+								<option>donation</option>
+								<option>other</option>
+							</select>
+						</div>
+						<div class="input-group my-3">
+							<div class="input-group-prepend px-1">
+								<span class="input-group-text">Commments<br />(optional)</span>
+							</div>
+							<textarea class="form-control userInput labeledInput" id="comment" rows="5"></textarea>
+						</div>
+					</div>
+					<div class="col-md-11 col-lg-11 col-l">
+						<a class="btn btn-lg m-3 signButton bg-primary " href="#" role="button">
+							<i class="icon-floppy"></i> Save
+						</a>
+						<a class="btn btn-lg m-3 bg-primary signButton" href="#" role="button">
+							<i class="icon-cancel-circled"></i> Cancel
+						</a>
+					</div>
 				</div>
-				
-				<div class="input">
-					<label for="dateInput">Date</label><input class="labeledInput" type="date" id="dateInput" required>
-				</div>
-				
-				<div class="input">
-					<label for="paymentMethod">Payment Method</label>
-					<select class="labeledInput" id="paymentMethod">
-						<option>cash</option>
-						<option>debit card</option>
-						<option>credit card</option>
-					</select>
-				</div>
-				
-				<div class="input">
-					<label for="expenseCategory">Category</label>
-					<select class="labeledInput" id="expenseCategory">
-						<option>food</option>
-						<option>house</option>
-						<option>transport</option>
-						<option>telecom</option>
-						<option>healthcare</option>
-						<option>clothing</option>
-						<option>hygiene</option>
-						<option>kids</option>
-						<option>entertainment</option>
-						<option>trip</option>
-						<option>trainings</option>
-						<option>books</option>
-						<option>savings</option>
-						<option>old age pension</option>
-						<option>debt repayment</option>
-						<option>donation</option>
-						<option>other</option>
-					</select>
-				</div>
-				
-				<div class="input">
-					<label for="comment">Commments (optional)</label>
-					<textarea class="labeledInput" id="comment" rows="5"></textarea>
-				</div>
-	
-				<button type="submit">Save</button>
-				<button type="submit">Cancel</button>
 			</form>
 		
 		</section>
@@ -117,12 +162,15 @@
 	</main>
 	
 	<footer>
-			
+		<div class="col-12 my-2 footer">
 			2020 &copy myBudget.com
-	
+		</div>
 	</footer>
 	
 	<script src="budget.js"></script>
+	<script src="https://code.jquery.com/jquery-3.4.1.slim.min.js" integrity="sha384-J6qa4849blE2+poT4WnyKhv5vZF5SrPo0iEjwBvKU7imGFAV0wwj1yYfoRSJoZ+n" crossorigin="anonymous"></script>
+	<script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js" integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo" crossorigin="anonymous"></script>
+	<script src="js/bootstrap.min.js"></script>
 	
 </body>
 </html>

@@ -1,5 +1,7 @@
 <!DOCTYPE html>
+
 <html lang="pl">
+
 <head>
 
 	<meta charset="utf-8">
@@ -18,39 +20,43 @@
 </head>
 
 <body onload="pageLoad();">
+	
 	<header>
-		<div class="container">
-			<div class="row mx-5 justify-content-around">
-				<h1 class="mx-3" id="title"><a id="homeButton" href="index.html" role="button"><span id="logo">MyBudget</span>.com</a></h1>
-			</div>
-			<p id="subtitle">Your Personal Finance Manager</p>
-		</div>
+	
+		<h1 class="mt-3 mb-1" id="title"><a id="homeButton" href="index.html" role="button">Welcome to <span id="logo">MyBudget</span>.com!</a></h1>
+		<p id="subtitle">Your Personal Finance Manager</p>
+		
 	</header>
 	
 	<main>
-		<section class="container-fluid square my-4 p-2">
+		
+		<section class="container-fluid square my-4 py-2">
 			
 			<nav class="navbar navbar-dark navbar-expand-lg">
 			
-				<button class="navbar-toggler bg-primary" type="button" data-toggle="collapse" data-target="#mainMenu" aria-controls="mainmenu" aria-expanded="false" aria-label="Przełącznik nawigacji">
+				<button class="navbar-toggler bg-primary" type="button" data-toggle="collapse" data-target="#mainMenu" aria-controls="mainMenu" aria-expanded="false" aria-label="Navigation toggler">
 					<span class="navbar-toggler-icon"></span>
 				</button>
 				
 				<div class="collapse navbar-collapse" id="mainMenu">
 			
 					<ul class="navbar-nav mx-auto">
+					
 						<li class="col-lg-2 nav-item disabled">
 							<a class="nav-link" href="main.html"><i class="icon-home"></i> Home</a>
 						</li>
+						
 						<li class="col-lg-2 nav-item">
 							<a class="nav-link" href="income.html"><i class="icon-money-1"></i> Add Income</a>
 						</li>
+						
 						<li class="col-lg-2 nav-item">
 							<a class="nav-link" href="expense.html"><i class="icon-dollar"></i> Add Expense</a>
 						</li>
+						
 						<li class="col-lg-2 nav-item dropdown">
 							<a class="nav-link" href="#" role="button"><i class="icon-chart-pie"></i> View Balance</a>
-							<div class="dropdown-menu bg-transparent border-0 m-0 p-0" aria-labelledby="submenu">
+							<div class="dropdown-menu bg-transparent border-0 m-0 p-0">
 							
 								<a class="dropdown-item" href="balance.html">Current Month</a>
 								<a class="dropdown-item" href="#">Last Month</a>
@@ -59,9 +65,10 @@
 							
 							</div>
 						</li>
+						
 						<li class="col-lg-2 nav-item dropdown">
-							<a a class="nav-link" href="#" role="button"><i class="icon-cog-alt"></i> Settings</a>
-							<div class="dropdown-menu bg-transparent border-0 m-0 p-0" aria-labelledby="submenu">
+							<a class="nav-link" href="#" role="button"><i class="icon-cog-alt"></i> Settings</a>
+							<div class="dropdown-menu bg-transparent border-0 m-0 p-0">
 							
 								<h6 class="dropdown-header">Profile settings</h6>
 								<a class="dropdown-item" href="#">Name</a>
@@ -75,9 +82,11 @@
 							
 							</div>
 						</li>
+						
 						<li class="col-lg-2 nav-item">
 							<a class="nav-link" href="index.html"><i class="icon-logout"></i> Sign out</a>
 						</li>
+						
 					</ul>
 					
 				</div>
@@ -89,45 +98,57 @@
 		<section class="container-fluid square mb-4">
 			
 			<div class="row justify-content-md-center py-3">
+			
 				<div class="col-12 timePeriod py-3">
-					<h1>CURRENT MONTH</h1>
+				
+					<h2>CURRENT MONTH</h2>
+					
 					<div class="btn-group m-2 mr-4 dateButton">
 						<button type="button" class="btn"><i class="icon-calendar"></i> Choose Date</button>
 						<button type="button" class="btn dropdown-toggle dropdown-toggle-split" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
 						<span class="sr-only">Expand the list</span>
 						</button>
-						<div class="dropdown-menu bg-transparent border-0 m-0 p-0 dropdown-menu-right" aria-labelledby="submenu">
+						<div class="dropdown-menu bg-transparent border-0 m-0 p-0 dropdown-menu-right">
 							<a class="dropdown-item" href="balance.html">Current Month</a>
 							<a class="dropdown-item" href="#">Last Month</a>
 							<a class="dropdown-item" href="#">Current Year</a>
 							<a class="dropdown-item" href="#">Custom</a>
 						</div>
 					</div>
+					
 				</div>
+				
 			</div>
 			
 			<div id="tables">
 				<div class="tableIncomes"></div>
 				<div class="tableExpenses"></div>
 				<div style="clear:both;"></div>
-				</div>
+			</div>
+			
 			<div class="box">
 				<div id="balance">BALANCE:</div><div id="result"></div>
 				<div style="clear:both;"></div>
 			</div>
+			
 			<h3 id="resultText"></h3>
+			
 			<div class="box">
 				<div id="piechart1"></div>
 				<div id="piechart2"></div>
 				<div style="clear:both;"></div>
 			</div>
+			
 		</section>
+		
 	</main>
 	
 	<footer>
-		<div class="col-12 my-2 footer">
+	
+		<div class="col my-2 footer">
 			2020 &copy myBudget.com
 		</div>
+		
 	</footer>
 	
 	<script src="budget.js"></script>
@@ -136,5 +157,7 @@
 	<script src="js/bootstrap.min.js"></script>
 	<script src="jquery-3.4.1.min.js"></script>
 	<script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+	
 </body>
+
 </html>

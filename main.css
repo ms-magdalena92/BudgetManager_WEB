@@ -2,6 +2,7 @@ html
 {
   position: relative;
   min-height: 100%;
+  min-width: 320px;
 }
 
 body
@@ -12,14 +13,14 @@ body
     font-family: 'Roboto', sans-serif;
 	font-size: 17px;
 	text-align: center;
-	margin-bottom: 40px;
+	margin-bottom: 60px;
 }
+
 
 #title
 {
 	font-size: 3em;
 	font-weight: 400;
-	margin: 20px 0px 10px 0px;
 }
 
 #logo
@@ -52,6 +53,7 @@ p
 
 .tile
 {
+	height: 100%;
 	font-size: 0.95em;
 	background-color: rgba(0, 153, 230, 0.5);
 	border-radius: 10px;
@@ -78,21 +80,6 @@ figcaption
 	margin-top: 10px;
 	font-weight: 500;
 	font-family: 'Baloo Paaji 2', cursive;
-}
-
-.row
-{
-	 display: -webkit-box;
-	 display: -webkit-flex;
-	 display: -ms-flexbox;
-	 display: flex;
-	 flex-wrap: wrap;
-}
-
-.row > [class*='col-6']
-{
-	display: flex;
-	flex-direction: column;
 }
 
 .option
@@ -169,8 +156,10 @@ form
 	border-radius: 5px;
 }
 
+
 a.nav-link,
-a.dropdown-item
+a.dropdown-item,
+.dateButton > button
 {
 	color: #595959 !important;
 	font-size: 1.05em !important;
@@ -182,13 +171,15 @@ ul
 	width: 100%;
 }
 
-ul > li
+ul > li,
+.dateButton > button
 {
 	background-color: rgba(255, 255, 255, 0.3);
 	border: 1px solid #bfbfbf;
 	border-radius: 10px;
 }
 
+.dateButton > button:hover,
 ul > li:hover
 {
 	background-color: #66b3ff;
@@ -361,30 +352,31 @@ tr:last-child
 	padding: 5px 40px;
 }
 
-#dateButton
+.timePeriod
 {
-	margin-top: 10px;
-	margin-right: 10px;
+	position: relative;
+	background-color: rgba(255, 255, 255, 0.2);
+}
+
+.timePeriod > h2
+{
+	padding: 0;
+	margin: 0;
+	font-weight: 400;
+	font-size: 26px;
+	letter-spacing: 2px;
+}
+
+.dateButton
+{
 	position: absolute;
 	top: 0;
 	right: 0;
 }
 
-.timePeriod
+.dateButton > button:focus
 {
-	padding: 15px 0;
-	width: 100%;
-	position: relative;
-	background-color: rgba(255, 255, 255, 0.2);
-	margin: 0px;
-}
-
-div.timePeriod > h1
-{
-	margin: 0px;
-	font-weight: 400;
-	font-size: 26px;
-	letter-spacing: 2px;
+  box-shadow: none;
 }
 
 #piechart1,
@@ -400,5 +392,19 @@ div.timePeriod > h1
 		display: flex;
 		flex-direction: row;
 		align-items: center;
+	}
+}
+
+@media (max-width: 767px)
+{
+	.timePeriod > h2
+	{
+		font-size: 22px;
+		float: left;
+	}
+	
+	#title
+	{
+		font-size: 2.5em;
 	}
 }

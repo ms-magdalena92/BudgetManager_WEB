@@ -10,6 +10,7 @@
 	
 	<meta http-equiv="X-Ua-Compatible" content="IE=edge">
 	
+	<link rel="stylesheet" href="css/bootstrap.min.css">
 	<link rel="stylesheet" href="main.css">
 	<link rel="stylesheet" href="css/fontello.css">
 	<link href="https://fonts.googleapis.com/css2?family=Baloo+Paaji+2:wght@400;500;700&family=Fredoka+One&family=Roboto:wght@400;700;900&family=Varela+Round&display=swap" rel="stylesheet">
@@ -18,59 +19,91 @@
 
 <body onload="pageLoad();">
 	<header>
-	
-		<div id="title"><a id="homeButton" href="index.html" role="button"><span id="logo">MyBudget</span>.com</a></div>
-		<div id="subtitle">Your Personal Finance Manager</div>
-	
+		<div class="container">
+			<div class="row mx-5 justify-content-around">
+				<h1 class="mx-3" id="title"><a id="homeButton" href="index.html" role="button"><span id="logo">MyBudget</span>.com</a></h1>
+			</div>
+			<p id="subtitle">Your Personal Finance Manager</p>
+		</div>
 	</header>
 	
 	<main>
-	
-		<section class="square">
+		<section class="container-fluid square my-4 p-2">
 			
-			<nav id="mainMenu">
+			<nav class="navbar navbar-dark navbar-expand-lg">
 			
-				<ol>
-					<li><a href="menu.html"><i class="icon-home"></i> Home</a></li>
-					<li><a href="income.html"><i class="icon-money-1"></i> Add Income</a></li>
-					<li><a href="expense.html"><i class="icon-dollar"></i> Add Expense</a></li>
-					<li class="disabled"><a><i class="icon-chart-pie"></i> View Balance</a>
-						<ul>
-							<li><a href="#">Current Month</a></li>
-							<li><a href="#">Last Month</a></li>
-							<li><a href="#">Current Year</a></li>
-							<li><a href="#">Custom</a></li>
-						</ul>
-					</li>
-					<li><a><i class="icon-cog-alt"></i> Settings</a>
-						<ul>
-							<li><a href="#">Profile</a></li>
-							<li><a href="#">Income Category</a></li>
-							<li><a href="#">Expense Category</a></li>
-						</ul>
-					</li>
-					<li><a href="index.html"><i class="icon-logout"></i> Sign out</a></li>
-				</ol>
+				<button class="navbar-toggler bg-primary" type="button" data-toggle="collapse" data-target="#mainMenu" aria-controls="mainmenu" aria-expanded="false" aria-label="Przełącznik nawigacji">
+					<span class="navbar-toggler-icon"></span>
+				</button>
+				
+				<div class="collapse navbar-collapse" id="mainMenu">
+			
+					<ul class="navbar-nav mx-auto">
+						<li class="col-lg-2 nav-item disabled">
+							<a class="nav-link" href="main.html"><i class="icon-home"></i> Home</a>
+						</li>
+						<li class="col-lg-2 nav-item">
+							<a class="nav-link" href="income.html"><i class="icon-money-1"></i> Add Income</a>
+						</li>
+						<li class="col-lg-2 nav-item">
+							<a class="nav-link" href="expense.html"><i class="icon-dollar"></i> Add Expense</a>
+						</li>
+						<li class="col-lg-2 nav-item dropdown">
+							<a class="nav-link" href="#" role="button"><i class="icon-chart-pie"></i> View Balance</a>
+							<div class="dropdown-menu bg-transparent border-0 m-0 p-0" aria-labelledby="submenu">
+							
+								<a class="dropdown-item" href="balance.html">Current Month</a>
+								<a class="dropdown-item" href="#">Last Month</a>
+								<a class="dropdown-item" href="#">Current Year</a>
+								<a class="dropdown-item" href="#">Custom</a>
+							
+							</div>
+						</li>
+						<li class="col-lg-2 nav-item dropdown">
+							<a a class="nav-link" href="#" role="button"><i class="icon-cog-alt"></i> Settings</a>
+							<div class="dropdown-menu bg-transparent border-0 m-0 p-0" aria-labelledby="submenu">
+							
+								<h6 class="dropdown-header">Profile settings</h6>
+								<a class="dropdown-item" href="#">Name</a>
+								<a class="dropdown-item" href="#">Password</a>
+								<a class="dropdown-item" href="#">E-mail Adress</a>
+								<div class="dropdown-divider"></div>
+								<h6 class="dropdown-header">Category settings</h6>
+								<a class="dropdown-item" href="#">Income</a>
+								<a class="dropdown-item" href="#">Expense</a>
+								<a class="dropdown-item" href="#">Payment Methods</a>
+							
+							</div>
+						</li>
+						<li class="col-lg-2 nav-item">
+							<a class="nav-link" href="index.html"><i class="icon-logout"></i> Sign out</a>
+						</li>
+					</ul>
+					
+				</div>
 			
 			</nav>
 		
 		</section>
 		
-		<section class="square">
+		<section class="container-fluid square mb-4">
 			
-			
-			<div class="timePeriod">
-				<h1>CURRENT MONTH</h1>
-				<ol id="dateButton">
-					<li><a><i class="icon-calendar"></i> Choose Date</a>
-						<ul>
-							<li><a href="#">Current Month</a></li>
-							<li><a href="#">Last Month</a></li>
-							<li><a href="#">Current Year</a></li>
-							<li><a href="#">Custom</a></li>
-						</ul>
-					</li>
-				</ol>
+			<div class="row justify-content-md-center py-3">
+				<div class="col-12 timePeriod py-3">
+					<h1>CURRENT MONTH</h1>
+					<div class="btn-group m-2 mr-4 dateButton">
+						<button type="button" class="btn"><i class="icon-calendar"></i> Choose Date</button>
+						<button type="button" class="btn dropdown-toggle dropdown-toggle-split" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+						<span class="sr-only">Expand the list</span>
+						</button>
+						<div class="dropdown-menu bg-transparent border-0 m-0 p-0 dropdown-menu-right" aria-labelledby="submenu">
+							<a class="dropdown-item" href="balance.html">Current Month</a>
+							<a class="dropdown-item" href="#">Last Month</a>
+							<a class="dropdown-item" href="#">Current Year</a>
+							<a class="dropdown-item" href="#">Custom</a>
+						</div>
+					</div>
+				</div>
 			</div>
 			
 			<div id="tables">
@@ -89,17 +122,18 @@
 				<div style="clear:both;"></div>
 			</div>
 		</section>
-		
-		
 	</main>
 	
 	<footer>
-			
+		<div class="col-12 my-2 footer">
 			2020 &copy myBudget.com
-	
+		</div>
 	</footer>
 	
 	<script src="budget.js"></script>
+	<script src="https://code.jquery.com/jquery-3.4.1.slim.min.js" integrity="sha384-J6qa4849blE2+poT4WnyKhv5vZF5SrPo0iEjwBvKU7imGFAV0wwj1yYfoRSJoZ+n" crossorigin="anonymous"></script>
+	<script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js" integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo" crossorigin="anonymous"></script>
+	<script src="js/bootstrap.min.js"></script>
 	<script src="jquery-3.4.1.min.js"></script>
 	<script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
 </body>

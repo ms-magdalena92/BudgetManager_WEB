@@ -83,6 +83,18 @@
       "css": "calendar",
       "code": 59401,
       "src": "fontawesome"
+    },
+    {
+      "uid": "191bcf63575a78def53c907c3d3bf7f0",
+      "css": "floppy",
+      "code": 59402,
+      "src": "entypo"
+    },
+    {
+      "uid": "0f4cae16f34ae243a6144c18a003f2d8",
+      "css": "cancel-circled",
+      "code": 59403,
+      "src": "fontawesome"
     }
   ]
 }

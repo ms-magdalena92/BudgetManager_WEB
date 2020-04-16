@@ -1,5 +1,7 @@
 <!DOCTYPE html>
+
 <html lang="pl">
+
 <head>
 
 	<meta charset="utf-8">
@@ -10,6 +12,7 @@
 	
 	<meta http-equiv="X-Ua-Compatible" content="IE=edge">
 	
+	<link rel="stylesheet" href="css/bootstrap.min.css">
 	<link rel="stylesheet" href="main.css">
 	<link rel="stylesheet" href="css/fontello.css">
 	<link href="https://fonts.googleapis.com/css2?family=Baloo+Paaji+2:wght@400;500;700&family=Fredoka+One&family=Roboto:wght@400;700;900&family=Varela+Round&display=swap" rel="stylesheet">
@@ -17,62 +20,76 @@
 </head>
 
 <body>
+	
 	<header>
 	
-		<div id="title"><a id="homeButton" href="index.html" role="button"><span id="logo">MyBudget</span>.com</a></div>
-		<div id="subtitle">Your Personal Finance Manager</div>
-	
+		<h1 class="mt-3 mb-1" id="title"><a id="homeButton" href="index.html" role="button">Welcome to <span id="logo">MyBudget</span>.com!</a></h1>
+		<p id="subtitle">Your Personal Finance Manager</p>
+		
 	</header>
 	
 	<main>
-	
-		<section class="square">
-			
-			<form class="signForm" action="menu.html" method="post">
-				<div class="input">
-					<div class="inputIcon">
-						<i class="icon-user"></i>
-					</div>
-					<div class="inputForm">
-						<input class="userInput" type="text" id="nameInput" placeholder="name" required>
-					</div>
-					<div style="clear:both;"></div>
-				</div>
-				<div class="input">
-					<div class="inputIcon">
-						<i class="icon-mail-alt"></i>
-					</div>
-					<div class="inputForm">
-						<input class="userInput" type="email" id="loginInput" placeholder="email@address.com" required>
-					</div>
-					<div style="clear:both;"></div>
-				</div>
-				<div class="input">
-					<div class="inputIcon">
-						<i class="icon-lock"></i>
-					</div>
-					<div class="inputForm">
-						<input class="userInput" type="password" id="passwordInput" placeholder="password" required>
-					</div>
-					<div style="clear:both;"></div>
-					<div id="passwordCheck"><input type="checkbox" onclick="showPassword()"> Show password</div>
-				</div>
-				<button class="signButton" type="submit">
-					<i class="icon-user-plus"></i> Sign up
-				</button>
-			</form>
 		
+		<section class="container-fluid square my-4 py-4">
+			
+			<form class="col-sm-10 col-md-8 col-lg-6 mx-auto my-2 py-3">
+				
+				<div class="row justify-content-around">
+				
+					<div class="col-sm-8">
+					
+						<div class="input-group mt-3 mb-2">
+							<div class="input-group-prepend px-1 pt-1 inputIcon">
+								<i class="icon-user"></i>
+							</div>
+							<input class="form-control  userInput" type="text" id="nameInput" placeholder="name" required>
+						</div>
+						
+						<div class="input-group mt-3 mb-2">
+							<div class="input-group-prepend px-1 pt-1 inputIcon">
+								<i class="icon-mail-alt"></i>
+							</div>
+							<input class="form-control  userInput" type="email" id="loginInput" placeholder="email@address.com" required>
+						</div>
+						
+						<div class="input-group mt-3 mb-2">
+							<div class="input-group-prepend px-1 pt-1 inputIcon">
+								<i class="icon-lock"></i>
+							</div>
+							<input class="form-control  userInput" type="password" id="passwordInput" placeholder="password" required>
+						</div>
+						
+						<div id="passwordCheck">
+							<input type="checkbox" onclick="showPassword()"> Show password
+						</div>
+						
+						<a class="btn btn-lg mt-3 mb-2 signButton" href="menu.html" role="button">
+							<i class="icon-user-plus"></i> Sign up
+						</a>
+						
+					</div>
+					
+				</div>
+				
+			</form>
+			
 		</section>
 		
 	</main>
 	
 	<footer>
-			
-			2020 &copy myBudget.com
 	
+		<div class="col my-2 footer">
+			2020 &copy myBudget.com
+		</div>
+		
 	</footer>
 	
 	<script src="budget.js"></script>
+	<script src="https://code.jquery.com/jquery-3.4.1.slim.min.js" integrity="sha384-J6qa4849blE2+poT4WnyKhv5vZF5SrPo0iEjwBvKU7imGFAV0wwj1yYfoRSJoZ+n" crossorigin="anonymous"></script>
+	<script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js" integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo" crossorigin="anonymous"></script>
+	<script src="js/bootstrap.min.js"></script>
 	
 </body>
+
 </html>

@@ -146,7 +146,7 @@ function generateExampleChart1() {
 		title: 'Source of Income',
 		colors: ['#00e64d', '#66ff99', '#b3ffcc'],
 		backgroundColor: { fill:'transparent' },
-		chartArea:{top:30,width:'100%',height:'100%'},
+		chartArea:{top:30,bottom:10,width:'100%',height:'100%'},
 		fontSize: 16
 	};
 
@@ -175,7 +175,7 @@ function generateExampleChart2() {
 		title: 'Spendings',
 		colors: ['#ff3333', '#ff6666', '#ffb3b3'],
 		backgroundColor: { fill:'transparent' },
-		chartArea:{top:30,width:'100%',height:'100%'},
+		chartArea:{top:30,bottom:10,width:'100%',height:'100%'},
 		fontSize: 16
 	};
 

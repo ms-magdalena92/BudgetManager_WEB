@@ -232,24 +232,9 @@ a.dropdown-item:hover
 	resize: none;
 }
 
-#tables
-{
-	width: 1050px;
-	margin: 0 auto;
-}
-
-.tableIncomes,
-.tableExpenses
-{
-	float: left;
-}
-
 table
 {
-	table-layout: fixed;
 	background-color: rgba(255, 255, 255, 0.7);
-	width: 465px;
-	margin: 25px;
 	border: 2px solid #b3b3b3;
 	border-radius: 10px;
 	border-collapse:separate; 
@@ -258,13 +243,13 @@ table
 
 caption
 {
+	text-align: center;
+	caption-side: top;
 	background-color: rgba(255, 255, 255, 0.3);
 	border: 2px solid #b3b3b3;
 	border-radius: 10px;
 	color: #0099e6;
-	padding: 3px;
-	margin-bottom: 10px;
-	font-size: 22px;
+	font-size: 1.3em;
 	font-weight: 700;
 	text-transform: uppercase;
 	letter-spacing: 1px;
@@ -273,27 +258,25 @@ caption
 th
 {
 	text-align: left;
-	padding-left: 5px;
 	color: #006699;
-	font-size: 18px;
+	font-size: 1.1em;
 	overflow: hidden;
 	overflow-wrap: normal;
 	border-bottom: 2px solid #b3b3b3;
 }
 
-th.category,
-th.amount
+td.amount,
+td.sum,
+td.date
 {
-	width: 100px;
+	white-space: nowrap;
 }
+
 
 td
 {
 	text-align: left;
-	padding-left: 7px;
-	font-size: 14px;
-	overflow: hidden;
-	overflow-wrap: normal;
+	font-size: 0.85em;
 	border-right: 1px dotted black;
 }
 
@@ -304,7 +287,7 @@ td.comment
 
 tr.summary > td
 {
-	font-size: 16px;
+	font-size: 0.95em;
 	font-weight: 700;
 	border: none;
 }
@@ -313,7 +296,6 @@ tr.summary > td
 td.sum
 {
 	text-align: right;
-	padding-right: 7px;
 }
 
 tr:last-child
@@ -321,35 +303,20 @@ tr:last-child
 	color: #2eb82e;
 }
 
-#balance
-{
-	float: left;
-}
-
-#result
-{
-	float: left;
-	margin-left: 15px;
-}
-
-#resultText
-{
-	margin: 0px;
-	margin-bottom: 20px;
-}
-
 .box
 {
-	display: inline-block;
-	margin: 10px;
-	font-size: 24px;
-	font-weight: 700;
-	letter-spacing: 1px;
 	text-align: center;
 	background-color: rgba(255, 255, 255, 0.7);
 	border: 2px solid #b3b3b3;
 	border-radius: 10px;
-	padding: 5px 40px;
+}
+
+#balance,
+#result
+{
+	font-size: 1.4em;
+	font-weight: 700;
+	letter-spacing: 1px;
 }
 
 .timePeriod
@@ -367,22 +334,9 @@ tr:last-child
 	letter-spacing: 2px;
 }
 
-.dateButton
-{
-	position: absolute;
-	top: 0;
-	right: 0;
-}
-
 .dateButton > button:focus
 {
   box-shadow: none;
-}
-
-#piechart1,
-#piechart2
-{
-	float: left;
 }
 
 @media (min-width: 992px) and (max-width: 1199px)
@@ -397,14 +351,18 @@ tr:last-child
 
 @media (max-width: 767px)
 {
-	.timePeriod > h2
-	{
-		font-size: 22px;
-		float: left;
-	}
-	
 	#title
 	{
 		font-size: 2.5em;
+	}
+}
+
+@media (min-width: 767px)
+{
+	.dateButton
+	{
+		position: absolute;
+		top: 0;
+		right: 0;
 	}
 }

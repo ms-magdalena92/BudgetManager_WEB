@@ -19,7 +19,7 @@
 
 </head>
 
-<body onload="pageLoad();">
+<body onload="pageLoad()" onresize="pageResize()">
 	
 	<header>
 	
@@ -95,7 +95,7 @@
 		
 		</section>
 		
-		<section class="container-fluid square mb-4">
+		<section class="container-fluid square mb-4 py-3">
 			
 			<div class="row justify-content-md-center py-3">
 			
@@ -120,23 +120,23 @@
 				
 			</div>
 			
-			<div id="tables">
-				<div class="tableIncomes"></div>
-				<div class="tableExpenses"></div>
-				<div style="clear:both;"></div>
+			<div class="row justify-content-center" id="tables">
+				<div class="table-responsive col-md-6" id="tableIncomes"></div>
+				<div class="table-responsive col-md-6" id="tableExpenses"></div>
 			</div>
 			
-			<div class="box">
-				<div id="balance">BALANCE:</div><div id="result"></div>
-				<div style="clear:both;"></div>
+			<div class="row col-sm-6 col-lg-4 justify-content-center mt-5 mb-2 mx-auto box">
+				<div id="balance">BALANCE: </div><div class="ml-3" id="result"></div>
 			</div>
 			
 			<h3 id="resultText"></h3>
 			
-			<div class="box">
+			<div class="col-sm-8 col-lg-6 mt-4 mb-2 pt-2 pb-4 mx-auto box" id="chartWrap">
 				<div id="piechart1"></div>
+			</div>
+
+			<div class="col-sm-8 col-lg-6 my-3 pt-2 pb-4 mx-auto box" id="chartWrap">
 				<div id="piechart2"></div>
-				<div style="clear:both;"></div>
 			</div>
 			
 		</section>

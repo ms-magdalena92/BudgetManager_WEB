@@ -336,7 +336,13 @@ tr:last-child
 
 .dateButton > button:focus
 {
-  box-shadow: none;
+	box-shadow: none;
+}
+
+.modal
+{
+	min-width: 300px;
+	overflow:  auto;
 }
 
 @media (min-width: 992px) and (max-width: 1199px)

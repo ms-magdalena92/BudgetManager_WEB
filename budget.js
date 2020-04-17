@@ -20,7 +20,8 @@ function getCurrentDate() {
 	if (day < 10)
 		day = "0" + day;
 
-	var today = year + "-" + month + "-" + day;       
+	var today = year + "-" + month + "-" + day;
+	
 	document.getElementById("dateInput").value = today;
 }
 

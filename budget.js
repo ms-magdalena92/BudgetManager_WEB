@@ -5,6 +5,11 @@ function showPassword() {
 		password.type = "text";
 	else
 		password.type = "password";
+	var password1 = document.getElementById("passwordConfirm");
+	if (password1.type === "password")
+		password1.type = "text";
+	else
+		password1.type = "password";
 }
 
 function getCurrentDate() {

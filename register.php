@@ -18,8 +18,8 @@
 		}
 		
 		$email = $_POST['email'];
-		$emailB = filter_var($email, FILTER_SANITIZE_EMAIL);
-		if(filter_var($emailB, FILTER_VALIDATE_EMAIL) == false || $emailB != $email)
+		$emailCheck = filter_var($email, FILTER_SANITIZE_EMAIL);
+		if(filter_var($emailCheck, FILTER_VALIDATE_EMAIL) == false || $emailCheck != $email)
 		{
 			$positiveValidation = false;
 			$_SESSION['errorEmail'] = "Please enter a valid e-mail adress";
@@ -46,51 +46,26 @@
 		$_SESSION['formPassword1']=$password1;
 		$_SESSION['formPassword2']=$password2;
 		
-		require_once "connect.php";
-		mysqli_report(MYSQLI_REPORT_STRICT);
-		try
+		require_once 'database.php';
+				
+		$checkEmailQuery = $db->prepare('SELECT user_id FROM users WHERE email = :email');
+		$checkEmailQuery -> execute([':email' => $email]);
+
+		$isEmailUsed = $checkEmailQuery -> rowCount();
+		if($isEmailUsed)
 		{
-			$connection = new mysqli($host, $db_user, $db_password, $db_name);
-			if ($connection->connect_errno!=0)
-			{
-				throw new Exception(mysqli_connect_errno());
-			}
-			else
-			{
-				$result = $connection->query("SELECT user_id FROM users WHERE email='$email'");
-				
-				if(!$result)
-				{
-					throw new Exception($connection->error);
-				}
-				
-				$numberOfExistingAdresses = $result->num_rows;
-				if($numberOfExistingAdresses > 0)
-				{
-					$positiveValidation = false;
-					$_SESSION['emailError'] = "An account with this e-mail adress already exists.";
-				}
-				
-				if($positiveValidation == true)
-				{
-					if($connection->query("INSERT INTO users VALUES(NULL, '$userName', '$passwordHash', '$email')"))
-					{
-						$_SESSION['successfulRegistration'] = true;
-						header('Location: menu.php');
-					}
-					else
-					{
-						throw new Exception($connection->error);
-					}
-				}
-				
-				$connection->close();
-			}
+			$positiveValidation = false;
+			$_SESSION['emailError'] = "An account with this e-mail adress already exists.";
 		}
-		catch(Exception $e)
+				
+		if($positiveValidation == true)
 		{
-			echo '<span class="text-danger"> Server error. Please try again later.</span>';
-			//echo '<br />Developer Information: '.$e;
+			$addUserQuery = $db->prepare("INSERT INTO users VALUES(NULL, :userName, :email, :passwordHash)");
+			$addUserQuery->execute([':userName'=> $userName, ':passwordHash'=> $passwordHash,':email' => $email]);
+			
+			$_SESSION['successfulRegistration'] = true;
+			
+			header('Location: menu.php');
 		}
 	}
 ?>

@@ -28,10 +28,10 @@
 		$password1 = $_POST['password'];
 		$password2 = $_POST['passwordConfirm'];
 		
-		if(strlen($password1) < 8 || strlen($password1) > 20)
+		if(strlen($password1) < 8 || strlen($password1) > 50)
 		{
 			$positiveValidation = false;
-			$_SESSION['passwordError'] = "Password needs to be between 2 to 20 characters.";
+			$_SESSION['passwordError'] = "Password needs to be between 8 to 50 characters.";
 		}
 		if($password1 != $password2)
 		{
@@ -63,8 +63,21 @@
 			$addUserQuery = $db->prepare("INSERT INTO users VALUES(NULL, :userName, :email, :passwordHash)");
 			$addUserQuery->execute([':userName'=> $userName, ':passwordHash'=> $passwordHash,':email' => $email]);
 			
-			$_SESSION['successfulRegistration'] = true;
+			$getUserId = $db->prepare('SELECT user_id FROM users WHERE email = :email');
+			$getUserId -> execute([':email' => $email]);
+			$result = $getUserId -> fetch();
+			$userId = $result['user_id'];
 			
+			$assignIncomeCategoriesToUser = $db->prepare("INSERT INTO user_income_category VALUES($userId, 1),($userId, 2),($userId, 3),($userId, 4)");
+			$assignIncomeCategoriesToUser -> execute();
+			
+			$assignExpenseCategoriesToUser = $db->prepare("INSERT INTO user_expense_category VALUES($userId, 1),($userId, 2),($userId, 3),($userId, 4),($userId, 5),($userId, 6),($userId, 7),($userId, 8),($userId, 9),($userId, 10),($userId, 11),($userId, 12),($userId, 13),($userId, 14),($userId, 15),($userId, 16),($userId, 17)");
+			$assignExpenseCategoriesToUser -> execute();
+			
+			$assignPaymentMethodsToUser = $db->prepare("INSERT INTO user_payment_method VALUES($userId, 1),($userId, 2),($userId, 3)");
+			$assignPaymentMethodsToUser -> execute();
+			
+			$_SESSION['successfulRegistration'] = true;
 			header('Location: menu.php');
 		}
 	}

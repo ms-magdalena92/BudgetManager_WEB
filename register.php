@@ -1,5 +1,6 @@
 <?php
 	session_start();
+	$_SESSION['successfulRegistration'] = false;
 	
 	if(isset($_POST['email']))
 	{
@@ -78,7 +79,6 @@
 			$assignPaymentMethodsToUser -> execute();
 			
 			$_SESSION['successfulRegistration'] = true;
-			header('Location: menu.php');
 		}
 	}
 ?>
@@ -101,6 +101,7 @@
 	<link rel="stylesheet" href="css/main.css">
 	<link rel="stylesheet" href="css/fontello.css">
 	<link href="https://fonts.googleapis.com/css2?family=Baloo+Paaji+2:wght@400;500;700&family=Fredoka+One&family=Roboto:wght@400;700;900&family=Varela+Round&display=swap" rel="stylesheet">
+	<script src="https://code.jquery.com/jquery-3.4.1.slim.min.js" integrity="sha384-J6qa4849blE2+poT4WnyKhv5vZF5SrPo0iEjwBvKU7imGFAV0wwj1yYfoRSJoZ+n" crossorigin="anonymous"></script>
 	
 </head>
 
@@ -117,7 +118,7 @@
 		
 		<section class="container-fluid square my-4 py-4">
 			
-			<form class="col-sm-10 col-md-8 col-lg-6 mx-auto my-2 py-3" method="post">
+			<form class="col-sm-10 col-md-8 col-lg-6 mx-auto my-2 py-3" id="submitButton" method="post">
 				
 				<div class="row justify-content-around">
 				
@@ -200,7 +201,7 @@
 							<input type="checkbox" onclick="showPassword()"> Show password
 						</div>
 						
-						<button class="btn btn-lg mt-3 mb-2 signButton" type="submit">
+						<button class="btn btn-lg mt-3 mb-2 signButton" type="submit" data-toggle="modal" data-target="#dateModal">
 							<i class="icon-user-plus"></i> Sign up
 						</button>
 						
@@ -212,6 +213,46 @@
 			
 		</section>
 		
+		<div class="modal fade" id="registration" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+		  <div class="modal-dialog" role="document">
+			<div class="modal-content">
+			  <div class="modal-body">
+				<h3 class="modal-title">Merci !</h3>
+			  </div>
+			</div>
+		  </div>
+		</div>
+		
+		<?php
+		
+			if($_SESSION['successfulRegistration'] == true){
+				echo "<script>$(document).ready(function(){ $('#registrationModal').modal('show'); });</script>
+
+					<div class='modal fade' id='registrationModal' role='dialog'>
+						<div class='modal-dialog col'>
+						  <div class='modal-content'>
+							<div class='modal-header'>
+								<h3 class='modal-title'>Successful Registration</h3>
+								<a href='index.php'>
+									<button type='button' class='close'>&times;</button>
+								</a>
+							</div>
+							
+							<div class='modal-body'>
+							  <p>Thank you for registration! You can now sign in.</p>
+							</div>
+								<div class='modal-footer'>
+									<a href='login.php'>
+										<button type='button' class='btn btn-success'>Sign in</button>
+									 </a>
+								</div>
+							</div>
+						</div>
+					</div>"; 
+			}
+		
+		?>
+		
 	</main>
 	
 	<footer>
@@ -222,10 +263,9 @@
 		
 	</footer>
 	
-	<script src="js/budget.js"></script>
-	<script src="https://code.jquery.com/jquery-3.4.1.slim.min.js" integrity="sha384-J6qa4849blE2+poT4WnyKhv5vZF5SrPo0iEjwBvKU7imGFAV0wwj1yYfoRSJoZ+n" crossorigin="anonymous"></script>
-	<script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js" integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo" crossorigin="anonymous"></script>
 	<script src="js/bootstrap.min.js"></script>
+	<script src="js/budget.js"></script>
+	<script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js" integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo" crossorigin="anonymous"></script>
 	
 </body>
 

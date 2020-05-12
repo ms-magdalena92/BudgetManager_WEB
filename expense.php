@@ -1,3 +1,26 @@
+<?php
+session_start();
+
+if(isset($_SESSION['loggedUserId'])) {
+	
+	require_once 'database.php';
+	
+	$expenseCategoryQuery = $db -> prepare('SELECT ec.expense_category FROM expense_categories ec NATURAL JOIN user_expense_category uec WHERE uec.user_id = :loggedUserId');
+	$expenseCategoryQuery -> execute([':loggedUserId'=> $_SESSION['loggedUserId']]);
+	
+	$expenseCategoriesOfLoggedUser = $expenseCategoryQuery -> fetchAll();
+	
+	$paymentMethodQuery = $db -> prepare('SELECT pm.payment_method FROM payment_methods pm NATURAL JOIN user_payment_method upm WHERE upm.user_id = :loggedUserId');
+	$paymentMethodQuery -> execute([':loggedUserId'=> $_SESSION['loggedUserId']]);
+	
+	$paymentMethodsOfLoggedUser = $paymentMethodQuery -> fetchAll();
+} else {
+	
+	header ("Location: index.php");
+}
+	
+?>
+
 <!DOCTYPE html>
 
 <html lang="pl">
@@ -124,9 +147,11 @@
 								<span class="input-group-text">Payment Method</span>
 							</div>
 							<select class="form-control userInput labeledInput" id="paymentMethod">
-								<option>cash</option>
-								<option>debit card</option>
-								<option>credit card</option>
+								<?php
+									foreach ($paymentMethodsOfLoggedUser as $payment_method) {
+									echo "<option>{$payment_method['payment_method']}</option>";
+									}
+								?>
 							</select>
 						</div>
 						
@@ -135,23 +160,11 @@
 								<span class="input-group-text">Category</span>
 							</div>
 							<select class="form-control userInput labeledInput" id="expenseCategory">
-								<option>food</option>
-								<option>house</option>
-								<option>transport</option>
-								<option>telecom</option>
-								<option>healthcare</option>
-								<option>clothing</option>
-								<option>hygiene</option>
-								<option>kids</option>
-								<option>entertainment</option>
-								<option>trip</option>
-								<option>trainings</option>
-								<option>books</option>
-								<option>savings</option>
-								<option>old age pension</option>
-								<option>debt repayment</option>
-								<option>donation</option>
-								<option>other</option>
+								<?php
+									foreach ($expenseCategoriesOfLoggedUser as $category) {
+									echo "<option>{$category['expense_category']}</option>";
+									}
+								?>
 							</select>
 						</div>
 						

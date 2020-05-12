@@ -1,3 +1,18 @@
+<?php
+session_start();
+
+if(isset($_SESSION['loggedUserId'])) {
+	
+	require_once 'database.php';
+	
+	$categoryQuery = $db -> prepare('SELECT ic.income_category FROM income_categories ic NATURAL JOIN user_income_category uic WHERE uic.user_id = :loggedUserId');
+	$categoryQuery -> execute([':loggedUserId'=> $_SESSION['loggedUserId']]);
+	
+	$categoriesOfLoggedUser = $categoryQuery -> fetchAll();
+}
+	
+?>
+
 <!DOCTYPE html>
 
 <html lang="pl">
@@ -124,10 +139,11 @@
 								<span class="input-group-text">Category</span>
 							</div>
 							<select class="form-control userInput labeledInput" id="expenseCategory">
-								<option>salary</option>
-								<option>bank interest</option>
-								<option>vending</option>
-								<option>other</option>
+								<?php
+									foreach ($categoriesOfLoggedUser as $category) {
+									echo "<option>{$category['income_category']}</option>";
+									}
+								?>
 							</select>
 						</div>
 						

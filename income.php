@@ -1,3 +1,21 @@
+<?php
+session_start();
+
+if(isset($_SESSION['loggedUserId'])) {
+	
+	require_once 'database.php';
+	
+	$incomeCategoryQuery = $db -> prepare('SELECT ic.income_category FROM income_categories ic NATURAL JOIN user_income_category uic WHERE uic.user_id = :loggedUserId');
+	$incomeCategoryQuery -> execute([':loggedUserId'=> $_SESSION['loggedUserId']]);
+	
+	$incomeCategoriesOfLoggedUser = $incomeCategoryQuery -> fetchAll();
+} else {
+	
+	header ("Location: index.php");
+}
+	
+?>
+
 <!DOCTYPE html>
 
 <html lang="pl">
@@ -124,10 +142,11 @@
 								<span class="input-group-text">Category</span>
 							</div>
 							<select class="form-control userInput labeledInput" id="expenseCategory">
-								<option>salary</option>
-								<option>bank interest</option>
-								<option>vending</option>
-								<option>other</option>
+								<?php
+									foreach ($incomeCategoriesOfLoggedUser as $category) {
+									echo "<option>{$category['income_category']}</option>";
+									}
+								?>
 							</select>
 						</div>
 						

@@ -1,3 +1,40 @@
+<?php
+session_start();
+
+require_once 'database.php';
+
+if(!isset($_SESSION['loggedUserId'])) {
+	
+	if(isset($_POST['email'])) {
+	
+		$email = filter_input(INPUT_POST, 'email', FILTER_SANITIZE_EMAIL);
+		$password = filter_input(INPUT_POST, 'password');
+	
+		$userQuery = $db -> prepare('SELECT user_id, password FROM users WHERE email = :email');
+		$userQuery->execute([':email'=> $email]);
+		
+		$user = $userQuery -> fetch();
+
+		if($user && password_verify($password, 
+		$user['password'])) {
+			
+			$_SESSION['loggedUserId'] = $user['user_id'];
+			unset($_SESSION['badAttempt']);
+		} else {
+			
+			$_SESSION['badAttempt'] = "";
+			header ('Location: login.php');
+			exit();
+		}
+	
+	} else {
+		$_SESSION['badAttempt'] = "";
+		header ('Location: login.php');
+		exit();
+	}
+}
+?>
+
 <!DOCTYPE html>
 
 <html lang="pl">
@@ -84,7 +121,7 @@
 						</li>
 						
 						<li class="col-lg-2 nav-item">
-							<a class="nav-link" href="index.html"><i class="icon-logout"></i> Sign out</a>
+							<a class="nav-link" href="logout.php"><i class="icon-logout"></i> Sign out</a>
 						</li>
 						
 					</ul>

@@ -1,5 +1,12 @@
 <?php
 	session_start();
+	
+	if(isset($_SESSION['loggedUserId'])) {
+	
+	header('Location: menu.php');
+	exit();
+	}
+	
 	$_SESSION['successfulRegistration'] = false;
 	
 	if(isset($_POST['email']))
@@ -118,7 +125,7 @@
 		
 		<section class="container-fluid square my-4 py-4">
 			
-			<form class="col-sm-10 col-md-8 col-lg-6 mx-auto my-2 py-3" id="submitButton" method="post">
+			<form class="col-sm-10 col-md-8 col-lg-6 mx-auto my-2 py-3" method="post">
 				
 				<div class="row justify-content-around">
 				

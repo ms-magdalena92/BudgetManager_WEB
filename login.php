@@ -1,3 +1,13 @@
+<?php
+session_start();
+	
+if(isset($_SESSION['loggedUserId'])) {
+	
+	header('Location: menu.php');
+	exit();
+}
+?>
+
 <!DOCTYPE html>
 
 <html lang="pl">
@@ -23,7 +33,7 @@
 
 	<header>
 	
-		<h1 class="mt-3 mb-1" id="title"><a id="homeButton" href="index.html" role="button">Welcome to <span id="logo">MyBudget</span>.com!</a></h1>
+		<h1 class="mt-3 mb-1" id="title"><a id="homeButton" href="index.php" role="button">Welcome to <span id="logo">MyBudget</span>.com!</a></h1>
 		<p id="subtitle">Your Personal Finance Manager</p>
 		
 	</header>
@@ -32,9 +42,17 @@
 		
 		<section class="container-fluid square my-4 py-4">
 			
-			<form class="col-sm-10 col-md-8 col-lg-6 mx-auto my-2 py-3">
+			<form class="col-sm-10 col-md-8 col-lg-6 mx-auto my-2 py-3" method="post" action="menu.php">
 				
 				<div class="row justify-content-around">
+					
+					<?php
+						if(isset($_SESSION['badAttempt']))
+						{
+							echo '<div class="text-danger px-2">The username or password you have entered is incorrect.</div>';
+							unset($_SESSION['badAttempt']);
+						}
+					?>
 					
 					<div class="col-sm-8">
 						
@@ -42,23 +60,23 @@
 							<div class="input-group-prepend px-1 pt-1 inputIcon">
 								<i class="icon-mail-alt"></i>
 							</div>
-							<input class="form-control  userInput" type="email" id="loginInput" placeholder="email@address.com" required>
+							<input class="form-control  userInput" type="email" id="loginInput" name="email" placeholder="email@address.com" required>
 						</div>
 							
 						<div class="input-group mt-3 mb-2">
 							<div class="input-group-prepend px-1 pt-1 inputIcon">
 								<i class="icon-lock"></i>
 							</div>
-							<input class="form-control  userInput" type="password" id="passwordInput" placeholder="password" required>
+							<input class="form-control  userInput" type="password" id="passwordInput" placeholder="password" name="password" required>
 						</div>
 							
 						<div>
 							<input type="checkbox" onclick="showPassword()"> Show password
 						</div>
-							
-						<a class="btn btn-lg mt-3 mb-2 signButton" href="menu.html" role="button">
+						
+						<button class="btn btn-lg mt-3 mb-2 signButton" type="submit" data-toggle="modal" data-target="#dateModal">
 							<i class="icon-login"></i> Sign in
-						</a>
+						</button>
 							
 					</div>
 						

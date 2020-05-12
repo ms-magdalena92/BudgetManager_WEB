@@ -9,7 +9,7 @@ try {
 	]);
 } catch (PDOException $error) {
 	
-	exit('Database error');
+	exit('Database error. Please try again later.');
 }
 
 ?>

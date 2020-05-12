@@ -1,3 +1,40 @@
+<?php
+session_start();
+
+require_once 'database.php';
+
+if(!isset($_SESSION['loggedUserId'])) {
+	
+	if(isset($_POST['email'])) {
+	
+		$email = filter_input(INPUT_POST, 'email', FILTER_SANITIZE_EMAIL);
+		$password = filter_input(INPUT_POST, 'password');
+	
+		$userQuery = $db -> prepare('SELECT user_id, password FROM users WHERE email = :email');
+		$userQuery->execute([':email'=> $email]);
+		
+		$user = $userQuery -> fetch();
+
+		if($user && password_verify($password, 
+		$user['password'])) {
+			
+			$_SESSION['loggedUserId'] = $user['user_id'];
+			unset($_SESSION['badAttempt']);
+		} else {
+			
+			$_SESSION['badAttempt'] = "";
+			header ('Location: login.php');
+			exit();
+		}
+	
+	} else {
+		$_SESSION['badAttempt'] = "";
+		header ('Location: login.php');
+		exit();
+	}
+}
+?>
+
 <!DOCTYPE html>
 
 <html lang="pl">
@@ -23,7 +60,7 @@
 
 	<header>
 	
-		<h1 class="mt-3 mb-1" id="title"><a id="homeButton" href="index.html" role="button">Welcome to <span id="logo">MyBudget</span>.com!</a></h1>
+		<h1 class="mt-3 mb-1" id="title"><a id="homeButton" href="index.php" role="button">Welcome to <span id="logo">MyBudget</span>.com!</a></h1>
 		<p id="subtitle">Your Personal Finance Manager</p>
 		
 	</header>
@@ -43,25 +80,25 @@
 					<ul class="navbar-nav mx-auto">
 					
 						<li class="col-lg-2 nav-item disabled">
-							<a class="nav-link" href="main.html"><i class="icon-home"></i> Home</a>
+							<a class="nav-link" href="menu.php"><i class="icon-home"></i> Home</a>
 						</li>
 						
 						<li class="col-lg-2 nav-item">
-							<a class="nav-link" href="income.html"><i class="icon-money-1"></i> Add Income</a>
+							<a class="nav-link" href="income.php"><i class="icon-money-1"></i> Add Income</a>
 						</li>
 						
 						<li class="col-lg-2 nav-item">
-							<a class="nav-link" href="expense.html"><i class="icon-dollar"></i> Add Expense</a>
+							<a class="nav-link" href="expense.php"><i class="icon-dollar"></i> Add Expense</a>
 						</li>
 						
 						<li class="col-lg-2 nav-item dropdown">
 							<a class="nav-link" href="#" role="button"><i class="icon-chart-pie"></i> View Balance</a>
 							<div class="dropdown-menu bg-transparent border-0 m-0 p-0">
 							
-								<a class="dropdown-item" href="balance.html">Current Month</a>
-								<a class="dropdown-item" href="#">Last Month</a>
-								<a class="dropdown-item" href="#">Current Year</a>
-								<a class="dropdown-item" href="#" data-toggle="modal" data-target="#dateModal">Custom</a>
+								<a class="dropdown-item" href="balance.php">Current Month</a>
+								<a class="dropdown-item" href="balance.php">Last Month</a>
+								<a class="dropdown-item" href="balance.php">Current Year</a>
+								<a class="dropdown-item" href="balance.php" data-toggle="modal" data-target="#dateModal">Custom</a>
 							
 							</div>
 						</li>
@@ -84,7 +121,7 @@
 						</li>
 						
 						<li class="col-lg-2 nav-item">
-							<a class="nav-link" href="index.html"><i class="icon-logout"></i> Sign out</a>
+							<a class="nav-link" href="logout.php"><i class="icon-logout"></i> Sign out</a>
 						</li>
 						
 					</ul>

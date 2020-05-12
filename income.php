@@ -23,7 +23,7 @@
 	
 	<header>
 	
-		<h1 class="mt-3 mb-1" id="title"><a id="homeButton" href="index.html" role="button">Welcome to <span id="logo">MyBudget</span>.com!</a></h1>
+		<h1 class="mt-3 mb-1" id="title"><a id="homeButton" href="index.php" role="button">Welcome to <span id="logo">MyBudget</span>.com!</a></h1>
 		<p id="subtitle">Your Personal Finance Manager</p>
 		
 	</header>
@@ -43,25 +43,25 @@
 					<ul class="navbar-nav mx-auto">
 					
 						<li class="col-lg-2 nav-item">
-							<a class="nav-link" href="menu.html"><i class="icon-home"></i> Home</a>
-						</li>
-						
-						<li class="col-lg-2 nav-item">
-							<a class="nav-link" href="income.html"><i class="icon-money-1"></i> Add Income</a>
+							<a class="nav-link" href="menu.php"><i class="icon-home"></i> Home</a>
 						</li>
 						
 						<li class="col-lg-2 nav-item disabled">
-							<a class="nav-link" href="expense.html"><i class="icon-dollar"></i> Add Expense</a>
+							<a class="nav-link" href="income.php"><i class="icon-money-1"></i> Add Income</a>
+						</li>
+						
+						<li class="col-lg-2 nav-item">
+							<a class="nav-link" href="expense.php"><i class="icon-dollar"></i> Add Expense</a>
 						</li>
 						
 						<li class="col-lg-2 nav-item dropdown">
 							<a class="nav-link" href="#" role="button"><i class="icon-chart-pie"></i> View Balance</a>
 							<div class="dropdown-menu bg-transparent border-0 m-0 p-0">
 							
-								<a class="dropdown-item" href="balance.html">Current Month</a>
-								<a class="dropdown-item" href="#">Last Month</a>
-								<a class="dropdown-item" href="#">Current Year</a>
-								<a class="dropdown-item" href="#" data-toggle="modal" data-target="#dateModal">Custom</a>
+								<a class="dropdown-item" href="balance.php">Current Month</a>
+								<a class="dropdown-item" href="balance.php">Last Month</a>
+								<a class="dropdown-item" href="balance.php">Current Year</a>
+								<a class="dropdown-item" href="balance.php" data-toggle="modal" data-target="#dateModal">Custom</a>
 							
 							</div>
 						</li>
@@ -84,7 +84,7 @@
 						</li>
 						
 						<li class="col-lg-2 nav-item">
-							<a class="nav-link" href="index.html"><i class="icon-logout"></i> Sign out</a>
+							<a class="nav-link" href="index.php"><i class="icon-logout"></i> Sign out</a>
 						</li>
 						
 					</ul>
@@ -99,7 +99,7 @@
 		
 			<form class="col-sm-10 col-md-8 col-lg-6 py-3 mx-auto">
 				
-				<h3>ADDING AN EXPENSE</h3>
+				<h3>ADDING AN INCOME</h3>
 				
 				<div class="row justify-content-around">
 				
@@ -121,36 +121,12 @@
 						
 						<div class="input-group my-3">
 							<div class="input-group-prepend px-1">
-								<span class="input-group-text">Payment Method</span>
-							</div>
-							<select class="form-control userInput labeledInput" id="paymentMethod">
-								<option>cash</option>
-								<option>debit card</option>
-								<option>credit card</option>
-							</select>
-						</div>
-						
-						<div class="input-group my-3">
-							<div class="input-group-prepend px-1">
 								<span class="input-group-text">Category</span>
 							</div>
 							<select class="form-control userInput labeledInput" id="expenseCategory">
-								<option>food</option>
-								<option>house</option>
-								<option>transport</option>
-								<option>telecom</option>
-								<option>healthcare</option>
-								<option>clothing</option>
-								<option>hygiene</option>
-								<option>kids</option>
-								<option>entertainment</option>
-								<option>trip</option>
-								<option>trainings</option>
-								<option>books</option>
-								<option>savings</option>
-								<option>old age pension</option>
-								<option>debt repayment</option>
-								<option>donation</option>
+								<option>salary</option>
+								<option>bank interest</option>
+								<option>vending</option>
 								<option>other</option>
 							</select>
 						</div>

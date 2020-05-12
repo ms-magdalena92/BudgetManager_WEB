@@ -23,7 +23,7 @@
 	
 	<header>
 	
-		<h1 class="mt-3 mb-1" id="title"><a id="homeButton" href="index.html" role="button">Welcome to <span id="logo">MyBudget</span>.com!</a></h1>
+		<h1 class="mt-3 mb-1" id="title"><a id="homeButton" href="index.php" role="button">Welcome to <span id="logo">MyBudget</span>.com!</a></h1>
 		<p id="subtitle">Your Personal Finance Manager</p>
 		
 	</header>
@@ -88,7 +88,7 @@
 					<div class="col-md-4 mt-2">
 						<div class="py-2 option">
 							Already have an account?<br />Sign in here:<br />
-							<a class="btn btn-lg my-2 signButton" href="login.html" role="button">
+							<a class="btn btn-lg my-2 signButton" href="login.php">
 							<i class="icon-login"></i> Sign in
 						</a>
 						</div>
@@ -97,7 +97,7 @@
 					<div class="col-md-4 mt-2">
 						<div class="py-2 option">
 							No account yet?<br />Create it here:<br />
-							<a class="btn btn-lg my-2 signButton" href="register.html" role="button">
+							<a class="btn btn-lg my-2 signButton" href="register.php">
 								<i class="icon-user-plus"></i> Register
 							</a>
 						</div>

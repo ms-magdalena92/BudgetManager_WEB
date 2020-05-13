@@ -11,23 +11,34 @@ if(isset($_SESSION['loggedUserId'])) {
 	$incomeCategoriesOfLoggedUser = $incomeCategoryQuery -> fetchAll();
 	
 	if(isset($_POST['incomeAmount'])) {
+		
+		$positiveValidation = true;
+		
 		if(empty($_POST['incomeAmount'])) {
 		
+			$_SESSION['emptyFieldError'] = "Please fill in all required fields.";
 			$_SESSION['incomeAmountError'] = "Amount of an income required.";
-			header ('Location: income.php');
-			
-		} else {
+			$positiveValidation = false;
+		} 
 		
-			$comment = htmlentities($_POST['incomeComment'], ENT_QUOTES, "UTF-8");
-			
+		$incomeComment = $_POST['incomeComment'];
+		
+		if(!empty($incomeComment) && !preg_match( '/[^a-ząćęłńóśźż0-9]/i', $incomeComment)) {
+					$_SESSION['commentError'] = "Comment can contain up to 100 characters - only letters and numbers allowed.";
+					$positiveValidation = false;
+			}
+	
+		if($positiveValidation == true) {
+
 			$addIncomeQuery = $db->prepare('INSERT INTO incomes VALUES (NULL, :userId, :incomeAmount, :incomeDate, (SELECT category_id FROM income_categories WHERE income_category=:incomeCategory), :incomeComment)');
-			$addIncomeQuery -> execute([':userId' => $_SESSION['loggedUserId'], ':incomeAmount' => $_POST['incomeAmount'], ':incomeDate' => $_POST['incomeDate'], ':incomeCategory' => $_POST['incomeCategory'], ':incomeComment' => $comment]);
+			$addIncomeQuery -> execute([':userId' => $_SESSION['loggedUserId'], ':incomeAmount' => $_POST['incomeAmount'], ':incomeDate' => $_POST['incomeDate'], ':incomeCategory' => $_POST['incomeCategory'], ':incomeComment' => $incomeComment]);
 		}
 	}
 	
 } else {
 	
 	header ("Location: index.php");
+	exit();
 }
 	
 ?>
@@ -118,7 +129,7 @@ if(isset($_SESSION['loggedUserId'])) {
 						</li>
 						
 						<li class="col-lg-2 nav-item">
-							<a class="nav-link" href="index.php"><i class="icon-logout"></i> Sign out</a>
+							<a class="nav-link" href="logout.php"><i class="icon-logout"></i> Sign out</a>
 						</li>
 						
 					</ul>
@@ -139,19 +150,27 @@ if(isset($_SESSION['loggedUserId'])) {
 				
 					<div class="col-sm-10 col-lg-8">
 					
+						<?php
+							if(isset($_SESSION['emptyFieldError']))
+							{
+								echo '<div class="text-danger">'.$_SESSION['emptyFieldError'].'</div>';
+								unset($_SESSION['emptyFieldError']);
+							}
+						?>
 						<div class="input-group my-3">
 							<div class="input-group-prepend px-1">
 								<span class="input-group-text">Amount</span>
 							</div>
 							<input class="form-control userInput labeledInput" type="number" name="incomeAmount" step="0.01">
-							<?php
-								if(isset($_SESSION['incomeAmountError']))
-								{
-									echo '<div class="text-danger">'.$_SESSION['incomeAmountError'].'</div>';
-									unset($_SESSION['incomeAmountError']);
-								}
-							?>
 						</div>
+						
+						<?php
+							if(isset($_SESSION['incomeAmountError']))
+							{
+								echo '<div class="text-danger">'.$_SESSION['incomeAmountError'].'</div>';
+								unset($_SESSION['incomeAmountError']);
+							}
+						?>
 						
 						<div class="input-group my-3">
 							<div class="input-group-prepend px-1">
@@ -177,8 +196,16 @@ if(isset($_SESSION['loggedUserId'])) {
 							<div class="input-group-prepend px-1">
 								<span class="input-group-text">Commments<br />(optional)</span>
 							</div>
-							<textarea class="form-control userInput labeledInput" name="incomeComment" rows="5"></textarea>
+							<textarea class="form-control userInput labeledInput" name="incomeComment" maxlength="100" rows="5"></textarea>
 						</div>
+						
+						<?php
+							if(isset($_SESSION['commentError']))
+							{
+								echo '<div class="text-danger">'.$_SESSION['commentError'].'</div>';
+								unset($_SESSION['commentError']);
+							}
+						?>
 						
 					</div>
 					

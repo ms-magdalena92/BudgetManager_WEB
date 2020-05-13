@@ -9,6 +9,22 @@ if(isset($_SESSION['loggedUserId'])) {
 	$incomeCategoryQuery -> execute([':loggedUserId'=> $_SESSION['loggedUserId']]);
 	
 	$incomeCategoriesOfLoggedUser = $incomeCategoryQuery -> fetchAll();
+	
+	if(isset($_POST['incomeAmount'])) {
+		if(empty($_POST['incomeAmount'])) {
+		
+			$_SESSION['incomeAmountError'] = "Amount of an income required.";
+			header ('Location: income.php');
+			
+		} else {
+		
+			$comment = htmlentities($_POST['incomeComment'], ENT_QUOTES, "UTF-8");
+			
+			$addIncomeQuery = $db->prepare('INSERT INTO incomes VALUES (NULL, :userId, :incomeAmount, :incomeDate, (SELECT category_id FROM income_categories WHERE income_category=:incomeCategory), :incomeComment)');
+			$addIncomeQuery -> execute([':userId' => $_SESSION['loggedUserId'], ':incomeAmount' => $_POST['incomeAmount'], ':incomeDate' => $_POST['incomeDate'], ':incomeCategory' => $_POST['incomeCategory'], ':incomeComment' => $comment]);
+		}
+	}
+	
 } else {
 	
 	header ("Location: index.php");
@@ -115,7 +131,7 @@ if(isset($_SESSION['loggedUserId'])) {
 		
 		<section class="container-fluid square my-4 py-4">
 		
-			<form class="col-sm-10 col-md-8 col-lg-6 py-3 mx-auto">
+			<form class="col-sm-10 col-md-8 col-lg-6 py-3 mx-auto" method="post">
 				
 				<h3>ADDING AN INCOME</h3>
 				
@@ -127,21 +143,28 @@ if(isset($_SESSION['loggedUserId'])) {
 							<div class="input-group-prepend px-1">
 								<span class="input-group-text">Amount</span>
 							</div>
-							<input class="form-control userInput labeledInput" type="number" id="expenseInput" step="0.01" required>
+							<input class="form-control userInput labeledInput" type="number" name="incomeAmount" step="0.01">
+							<?php
+								if(isset($_SESSION['incomeAmountError']))
+								{
+									echo '<div class="text-danger">'.$_SESSION['incomeAmountError'].'</div>';
+									unset($_SESSION['incomeAmountError']);
+								}
+							?>
 						</div>
 						
 						<div class="input-group my-3">
 							<div class="input-group-prepend px-1">
 								<span class="input-group-text">Date</span>
 							</div>
-							<input class="form-control  userInput labeledInput" type="date" id="dateInput" required>
+							<input class="form-control  userInput labeledInput" type="date" id="dateInput" name="incomeDate" required>
 						</div>
 						
 						<div class="input-group my-3">
 							<div class="input-group-prepend px-1">
 								<span class="input-group-text">Category</span>
 							</div>
-							<select class="form-control userInput labeledInput" id="expenseCategory">
+							<select class="form-control userInput labeledInput" name="incomeCategory">
 								<?php
 									foreach ($incomeCategoriesOfLoggedUser as $category) {
 									echo "<option>{$category['income_category']}</option>";
@@ -154,18 +177,19 @@ if(isset($_SESSION['loggedUserId'])) {
 							<div class="input-group-prepend px-1">
 								<span class="input-group-text">Commments<br />(optional)</span>
 							</div>
-							<textarea class="form-control userInput labeledInput" id="comment" rows="5"></textarea>
+							<textarea class="form-control userInput labeledInput" name="incomeComment" rows="5"></textarea>
 						</div>
 						
 					</div>
 					
 					<div class="col-md-11">
-						<a class="btn btn-lg mt-3 mb-2 signButton bg-primary " href="#" role="button">
+						<button class="btn-lg mt-3 mb-2 mx-1 signButton bg-primary" type="submit">
+						<!--<button class="btn-lg mt-3 mb-2 mx-1 signButton bg-primary" type="submit" data-toggle="modal" data-target="#saveIncomeModal">-->
 							<i class="icon-floppy"></i> Save
-						</a>
-						<a class="btn btn-lg mt-3 mb-2 bg-primary signButton" href="#" role="button">
+						</button>
+						<button class="btn-lg mt-3 mb-2 mx-1 signButton bg-danger" data-toggle="modal" data-target="#discardIncomeModal">
 							<i class="icon-cancel-circled"></i> Cancel
-						</a>
+						</button>
 					</div>
 					
 				</div>
@@ -185,7 +209,7 @@ if(isset($_SESSION['loggedUserId'])) {
 
 					<div class="modal-body">
 					
-						<form class="col py-3 mx-auto">
+						<form class="col py-3 mx-auto" method="post">
 				
 							<h5>Enter a start date and an end date of period that you want to review</h5>
 							
@@ -193,12 +217,12 @@ if(isset($_SESSION['loggedUserId'])) {
 							
 								<div class="form-group my-2">
 									<label for="dateInput1">Enter start date</label>
-									<input class="form-control  userInput labeledInput" type="date" id="dateInput1" required>
+									<input class="form-control  userInput labeledInput" type="date" id="dateInput1" name="startDate" required>
 								</div>
 								
 								<div class="form-group my-2">
 									<label for="dateInput2">Enter end date</label>
-									<input class="form-control  userInput labeledInput" type="date" id="dateInput2" required>
+									<input class="form-control  userInput labeledInput" type="date" id="dateInput2" name="endDate" required>
 								</div>
 								
 							</div>

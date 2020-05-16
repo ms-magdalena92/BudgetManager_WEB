@@ -5,41 +5,46 @@ if(isset($_SESSION['loggedUserId'])) {
 	
 	require_once 'database.php';
 	
-	$incomeCategoryQuery = $db -> prepare('SELECT ic.income_category FROM income_categories ic NATURAL JOIN user_income_category uic WHERE uic.user_id = :loggedUserId');
+	$incomeCategoryQuery = $db -> prepare(
+	'SELECT ic.income_category
+	FROM income_categories ic NATURAL JOIN user_income_category uic
+	WHERE uic.user_id = :loggedUserId');
 	$incomeCategoryQuery -> execute([':loggedUserId'=> $_SESSION['loggedUserId']]);
 	
 	$incomeCategoriesOfLoggedUser = $incomeCategoryQuery -> fetchAll();
 	
 	if(isset($_POST['incomeAmount'])) {
 		
-		$positiveValidation = true;
-		
-		$incomeAmount = number_format($_POST['incomeAmount'], 2, '.', '');
-		$amount = explode('.', $incomeAmount);
-		
-		
-		if(!is_numeric($incomeAmount) || strlen($incomeAmount) > 9 || $incomeAmount < 0 || !(isset($amount[1]) && strlen($amount[1]) == 2)) {
-			
-			if(empty($incomeAmount)) {
+		if(!empty($_POST['incomeAmount'])) {
 				
-				$_SESSION['emptyFieldError'] = "Please fill in all required fields.";
+			$positiveValidation = true;
+			
+			$incomeAmount = number_format($_POST['incomeAmount'], 2, '.', '');
+			$amount = explode('.', $incomeAmount);
+				
+			if(!is_numeric($incomeAmount) || strlen($incomeAmount) > 9 || $incomeAmount < 0 || !(isset($amount[1]) && strlen($amount[1]) == 2)) {
+					
+				$_SESSION['incomeAmountError'] = "Enter valid positive amount - maximum 6 integer digits and 2 decimal places.";
+				$positiveValidation = false;
 			}
 			
-			$_SESSION['incomeAmountError'] = "Enter valid positive amount - maximum 6 integer digits and 2 decimal places.";
-			$positiveValidation = false;
-		}
-		
-		$incomeComment = $_POST['incomeComment'];
-		
-		if(!empty($incomeComment) && !preg_match('/[^a-ząćęłńóśźżA-ZĄĆĘŁŃÓŚŹŻ0-9]/i', $incomeComment)) {
-					$_SESSION['commentError'] = "Comment can contain up to 100 characters - only letters and numbers allowed.";
-					$positiveValidation = false;
+			$incomeComment = $_POST['incomeComment'];
+			
+			if(!empty($incomeComment) && !preg_match('/[^a-ząćęłńóśźżA-ZĄĆĘŁŃÓŚŹŻ0-9]/i', $incomeComment)) {
+				$_SESSION['commentError'] = "Comment can contain up to 100 characters - only letters and numbers allowed.";
+				$positiveValidation = false;
 			}
-	
-		if($positiveValidation == true) {
+		
+			if($positiveValidation == true) {
 
-			$addIncomeQuery = $db->prepare('INSERT INTO incomes VALUES (NULL, :userId, :incomeAmount, :incomeDate, (SELECT category_id FROM income_categories WHERE income_category=:incomeCategory), :incomeComment)');
-			$addIncomeQuery -> execute([':userId' => $_SESSION['loggedUserId'], ':incomeAmount' => $incomeAmount, ':incomeDate' => $_POST['incomeDate'], ':incomeCategory' => $_POST['incomeCategory'], ':incomeComment' => $incomeComment]);
+				$addIncomeQuery = $db->prepare(
+				'INSERT INTO incomes
+				VALUES (NULL, :userId, :incomeAmount, :incomeDate, (SELECT category_id FROM income_categories WHERE income_category=:incomeCategory), :incomeComment)');
+				$addIncomeQuery -> execute([':userId' => $_SESSION['loggedUserId'], ':incomeAmount' => $incomeAmount, ':incomeDate' => $_POST['incomeDate'], ':incomeCategory' => $_POST['incomeCategory'], ':incomeComment' => $incomeComment]);
+			}
+		} else {
+				$_SESSION['emptyFieldError'] = "Please fill in all required fields.";
+				$_SESSION['incomeAmountError'] = "Amount of an income required.";
 		}
 	}
 	

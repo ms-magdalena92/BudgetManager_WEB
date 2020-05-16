@@ -14,16 +14,24 @@ if(isset($_SESSION['loggedUserId'])) {
 		
 		$positiveValidation = true;
 		
-		if(empty($_POST['incomeAmount'])) {
+		$incomeAmount = number_format($_POST['incomeAmount'], 2, '.', '');
+		$amount = explode('.', $incomeAmount);
 		
-			$_SESSION['emptyFieldError'] = "Please fill in all required fields.";
-			$_SESSION['incomeAmountError'] = "Amount of an income required.";
+		
+		if(!is_numeric($incomeAmount) || strlen($incomeAmount) > 9 || $incomeAmount < 0 || !(isset($amount[1]) && strlen($amount[1]) == 2)) {
+			
+			if(empty($incomeAmount)) {
+				
+				$_SESSION['emptyFieldError'] = "Please fill in all required fields.";
+			}
+			
+			$_SESSION['incomeAmountError'] = "Enter valid positive amount - maximum 6 integer digits and 2 decimal places.";
 			$positiveValidation = false;
-		} 
+		}
 		
 		$incomeComment = $_POST['incomeComment'];
 		
-		if(!empty($incomeComment) && !preg_match( '/[^a-ząćęłńóśźż0-9]/i', $incomeComment)) {
+		if(!empty($incomeComment) && !preg_match('/[^a-ząćęłńóśźżA-ZĄĆĘŁŃÓŚŹŻ0-9]/i', $incomeComment)) {
 					$_SESSION['commentError'] = "Comment can contain up to 100 characters - only letters and numbers allowed.";
 					$positiveValidation = false;
 			}
@@ -31,7 +39,7 @@ if(isset($_SESSION['loggedUserId'])) {
 		if($positiveValidation == true) {
 
 			$addIncomeQuery = $db->prepare('INSERT INTO incomes VALUES (NULL, :userId, :incomeAmount, :incomeDate, (SELECT category_id FROM income_categories WHERE income_category=:incomeCategory), :incomeComment)');
-			$addIncomeQuery -> execute([':userId' => $_SESSION['loggedUserId'], ':incomeAmount' => $_POST['incomeAmount'], ':incomeDate' => $_POST['incomeDate'], ':incomeCategory' => $_POST['incomeCategory'], ':incomeComment' => $incomeComment]);
+			$addIncomeQuery -> execute([':userId' => $_SESSION['loggedUserId'], ':incomeAmount' => $incomeAmount, ':incomeDate' => $_POST['incomeDate'], ':incomeCategory' => $_POST['incomeCategory'], ':incomeComment' => $incomeComment]);
 		}
 	}
 	

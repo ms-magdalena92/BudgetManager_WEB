@@ -34,6 +34,11 @@ if(isset($_SESSION['loggedUserId'])) {
 				$_SESSION['commentError'] = "Comment can contain up to 100 characters - only letters and numbers allowed.";
 				$positiveValidation = false;
 			}
+			
+			$_SESSION['formIncomeAmount'] = $incomeAmount;
+			$_SESSION['formIncomeDate'] = $_POST['incomeDate'];
+			$_SESSION['formIncomeCategory'] = $_POST['incomeCategory'];
+			$_SESSION['formIncomeComment']=$incomeComment;
 		
 			if($positiveValidation == true) {
 
@@ -42,6 +47,7 @@ if(isset($_SESSION['loggedUserId'])) {
 				VALUES (NULL, :userId, :incomeAmount, :incomeDate, (SELECT category_id FROM income_categories WHERE income_category=:incomeCategory), :incomeComment)');
 				$addIncomeQuery -> execute([':userId' => $_SESSION['loggedUserId'], ':incomeAmount' => $incomeAmount, ':incomeDate' => $_POST['incomeDate'], ':incomeCategory' => $_POST['incomeCategory'], ':incomeComment' => $incomeComment]);
 			}
+			
 		} else {
 				$_SESSION['emptyFieldError'] = "Please fill in all required fields.";
 				$_SESSION['incomeAmountError'] = "Amount of an income required.";
@@ -70,6 +76,8 @@ if(isset($_SESSION['loggedUserId'])) {
 	
 	<meta http-equiv="X-Ua-Compatible" content="IE=edge">
 	
+	<script src="js/budget.js"></script>
+	<script src="https://code.jquery.com/jquery-3.4.1.slim.min.js" integrity="sha384-J6qa4849blE2+poT4WnyKhv5vZF5SrPo0iEjwBvKU7imGFAV0wwj1yYfoRSJoZ+n" crossorigin="anonymous"></script>
 	<link rel="stylesheet" href="css/bootstrap.min.css">
 	<link rel="stylesheet" href="css/main.css">
 	<link rel="stylesheet" href="css/fontello.css">
@@ -77,7 +85,7 @@ if(isset($_SESSION['loggedUserId'])) {
 	
 </head>
 
-<body onload="getCurrentDate()">
+<body>
 	
 	<header>
 	
@@ -164,8 +172,8 @@ if(isset($_SESSION['loggedUserId'])) {
 					<div class="col-sm-10 col-lg-8">
 					
 						<?php
-							if(isset($_SESSION['emptyFieldError']))
-							{
+							if(isset($_SESSION['emptyFieldError'])) {
+								
 								echo '<div class="text-danger">'.$_SESSION['emptyFieldError'].'</div>';
 								unset($_SESSION['emptyFieldError']);
 							}
@@ -174,12 +182,26 @@ if(isset($_SESSION['loggedUserId'])) {
 							<div class="input-group-prepend px-1">
 								<span class="input-group-text">Amount</span>
 							</div>
-							<input class="form-control userInput labeledInput" type="number" name="incomeAmount" step="0.01">
+							
+							<?php
+							if(!isset($_SESSION['formIncomeAmount'])) {
+								
+									echo "<script>$(document).ready(function(){getCurrentDate();})</script>";
+								}
+							?>
+
+							<input class="form-control userInput labeledInput" type="number" name="incomeAmount" step="0.01" value="<?php
+								if(isset($_SESSION['formIncomeAmount'])) {
+									
+									echo $_SESSION['formIncomeAmount'];
+									unset($_SESSION['formIncomeAmount']);
+								}
+							?>" required>
 						</div>
 						
 						<?php
-							if(isset($_SESSION['incomeAmountError']))
-							{
+							if(isset($_SESSION['incomeAmountError'])) {
+								
 								echo '<div class="text-danger">'.$_SESSION['incomeAmountError'].'</div>';
 								unset($_SESSION['incomeAmountError']);
 							}
@@ -189,7 +211,13 @@ if(isset($_SESSION['loggedUserId'])) {
 							<div class="input-group-prepend px-1">
 								<span class="input-group-text">Date</span>
 							</div>
-							<input class="form-control  userInput labeledInput" type="date" id="dateInput" name="incomeDate" required>
+							<input class="form-control  userInput labeledInput" type="date" id="dateInput" name="incomeDate" value="<?php
+								if(isset($_SESSION['formIncomeDate'])) {
+									
+									echo $_SESSION['formIncomeDate'];
+									unset($_SESSION['formIncomeDate']);
+								}
+							?>" required>
 						</div>
 						
 						<div class="input-group my-3">
@@ -199,7 +227,15 @@ if(isset($_SESSION['loggedUserId'])) {
 							<select class="form-control userInput labeledInput" name="incomeCategory">
 								<?php
 									foreach ($incomeCategoriesOfLoggedUser as $category) {
-									echo "<option>{$category['income_category']}</option>";
+										
+										if(isset($_SESSION['formIncomeCategory']) && $_SESSION['formIncomeCategory'] == $category['income_category']) {
+											
+											echo '<option selected>'.$category['income_category']."</option>";
+											unset($_SESSION['formIncomeCategory']);
+										} else {
+											
+											echo "<option>".$category['income_category']."</option>";
+										}
 									}
 								?>
 							</select>
@@ -209,12 +245,18 @@ if(isset($_SESSION['loggedUserId'])) {
 							<div class="input-group-prepend px-1">
 								<span class="input-group-text">Commments<br />(optional)</span>
 							</div>
-							<textarea class="form-control userInput labeledInput" name="incomeComment" maxlength="100" rows="5"></textarea>
+							<textarea class="form-control userInput labeledInput" name="incomeComment" maxlength="100" rows="5"><?php
+									if(isset($_SESSION['formIncomeComment'])) {
+										
+										echo $_SESSION['formIncomeComment'];
+										unset($_SESSION['formIncomeComment']);
+									}
+								?></textarea>
 						</div>
 						
 						<?php
-							if(isset($_SESSION['commentError']))
-							{
+							if(isset($_SESSION['commentError'])) {
+								
 								echo '<div class="text-danger">'.$_SESSION['commentError'].'</div>';
 								unset($_SESSION['commentError']);
 							}
@@ -224,7 +266,6 @@ if(isset($_SESSION['loggedUserId'])) {
 					
 					<div class="col-md-11">
 						<button class="btn-lg mt-3 mb-2 mx-1 signButton bg-primary" type="submit">
-						<!--<button class="btn-lg mt-3 mb-2 mx-1 signButton bg-primary" type="submit" data-toggle="modal" data-target="#saveIncomeModal">-->
 							<i class="icon-floppy"></i> Save
 						</button>
 						<button class="btn-lg mt-3 mb-2 mx-1 signButton bg-danger" data-toggle="modal" data-target="#discardIncomeModal">
@@ -289,8 +330,7 @@ if(isset($_SESSION['loggedUserId'])) {
 		</div>
 		
 	</footer>
-	
-	<script src="js/budget.js"></script>
+
 	<script src="https://code.jquery.com/jquery-3.4.1.slim.min.js" integrity="sha384-J6qa4849blE2+poT4WnyKhv5vZF5SrPo0iEjwBvKU7imGFAV0wwj1yYfoRSJoZ+n" crossorigin="anonymous"></script>
 	<script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js" integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo" crossorigin="anonymous"></script>
 	<script src="js/bootstrap.min.js"></script>

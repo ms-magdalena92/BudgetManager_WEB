@@ -5,13 +5,63 @@ if(isset($_SESSION['loggedUserId'])) {
 	
 	require_once 'database.php';
 	
-	$incomeCategoryQuery = $db -> prepare('SELECT ic.income_category FROM income_categories ic NATURAL JOIN user_income_category uic WHERE uic.user_id = :loggedUserId');
+	$incomeCategoryQuery = $db -> prepare(
+	'SELECT ic.income_category
+	FROM income_categories ic NATURAL JOIN user_income_category uic
+	WHERE uic.user_id = :loggedUserId');
 	$incomeCategoryQuery -> execute([':loggedUserId'=> $_SESSION['loggedUserId']]);
 	
 	$incomeCategoriesOfLoggedUser = $incomeCategoryQuery -> fetchAll();
+	
+	$_SESSION['incomeAdded'] = false;
+	
+	if(isset($_POST['incomeAmount'])) {
+		
+		if(!empty($_POST['incomeAmount'])) {
+				
+			$positiveValidation = true;
+			
+			$incomeAmount = number_format($_POST['incomeAmount'], 2, '.', '');
+			$amount = explode('.', $incomeAmount);
+				
+			if(!is_numeric($incomeAmount) || strlen($incomeAmount) > 9 || $incomeAmount < 0 || !(isset($amount[1]) && strlen($amount[1]) == 2)) {
+					
+				$_SESSION['incomeAmountError'] = "Enter valid positive amount - maximum 6 integer digits and 2 decimal places.";
+				$positiveValidation = false;
+			}
+			
+			$incomeComment = $_POST['incomeComment'];
+			
+			if(!empty($incomeComment) && !preg_match('/[a-ząćęłńóśźżA-ZĄĆĘŁŃÓŚŹŻ0-9]/i', $incomeComment)) {
+				$_SESSION['commentError'] = "Comment can contain up to 100 characters - only letters and numbers allowed.";
+				$positiveValidation = false;
+			}
+			
+			$_SESSION['formIncomeAmount'] = $incomeAmount;
+			$_SESSION['formIncomeDate'] = $_POST['incomeDate'];
+			$_SESSION['formIncomeCategory'] = $_POST['incomeCategory'];
+			$_SESSION['formIncomeComment']=$incomeComment;
+		
+			if($positiveValidation == true) {
+
+				$addIncomeQuery = $db->prepare(
+				'INSERT INTO incomes
+				VALUES (NULL, :userId, :incomeAmount, :incomeDate, (SELECT category_id FROM income_categories WHERE income_category=:incomeCategory), :incomeComment)');
+				$addIncomeQuery -> execute([':userId' => $_SESSION['loggedUserId'], ':incomeAmount' => $incomeAmount, ':incomeDate' => $_POST['incomeDate'], ':incomeCategory' => $_POST['incomeCategory'], ':incomeComment' => $incomeComment]);
+				
+				$_SESSION['incomeAdded'] = true;
+			}
+			
+		} else {
+				$_SESSION['emptyFieldError'] = "Please fill in all required fields.";
+				$_SESSION['incomeAmountError'] = "Amount of an income required.";
+		}
+	}
+	
 } else {
 	
 	header ("Location: index.php");
+	exit();
 }
 	
 ?>
@@ -30,6 +80,8 @@ if(isset($_SESSION['loggedUserId'])) {
 	
 	<meta http-equiv="X-Ua-Compatible" content="IE=edge">
 	
+	<script src="js/budget.js"></script>
+	<script src="https://code.jquery.com/jquery-3.4.1.slim.min.js" integrity="sha384-J6qa4849blE2+poT4WnyKhv5vZF5SrPo0iEjwBvKU7imGFAV0wwj1yYfoRSJoZ+n" crossorigin="anonymous"></script>
 	<link rel="stylesheet" href="css/bootstrap.min.css">
 	<link rel="stylesheet" href="css/main.css">
 	<link rel="stylesheet" href="css/fontello.css">
@@ -37,7 +89,7 @@ if(isset($_SESSION['loggedUserId'])) {
 	
 </head>
 
-<body onload="getCurrentDate()">
+<body>
 	
 	<header>
 	
@@ -102,7 +154,7 @@ if(isset($_SESSION['loggedUserId'])) {
 						</li>
 						
 						<li class="col-lg-2 nav-item">
-							<a class="nav-link" href="index.php"><i class="icon-logout"></i> Sign out</a>
+							<a class="nav-link" href="logout.php"><i class="icon-logout"></i> Sign out</a>
 						</li>
 						
 					</ul>
@@ -115,7 +167,7 @@ if(isset($_SESSION['loggedUserId'])) {
 		
 		<section class="container-fluid square my-4 py-4">
 		
-			<form class="col-sm-10 col-md-8 col-lg-6 py-3 mx-auto">
+			<form class="col-sm-10 col-md-8 col-lg-6 py-3 mx-auto" method="post">
 				
 				<h3>ADDING AN INCOME</h3>
 				
@@ -123,28 +175,71 @@ if(isset($_SESSION['loggedUserId'])) {
 				
 					<div class="col-sm-10 col-lg-8">
 					
+						<?php
+							if(isset($_SESSION['emptyFieldError'])) {
+								
+								echo '<div class="text-danger">'.$_SESSION['emptyFieldError'].'</div>';
+								unset($_SESSION['emptyFieldError']);
+							}
+						?>
 						<div class="input-group my-3">
 							<div class="input-group-prepend px-1">
 								<span class="input-group-text">Amount</span>
 							</div>
-							<input class="form-control userInput labeledInput" type="number" id="expenseInput" step="0.01" required>
+							
+							<?php
+							if(!isset($_SESSION['formIncomeAmount'])) {
+								
+									echo "<script>$(document).ready(function(){getCurrentDate();})</script>";
+								}
+							?>
+
+							<input class="form-control userInput labeledInput" type="number" name="incomeAmount" step="0.01" value="<?php
+								if(isset($_SESSION['formIncomeAmount'])) {
+									
+									echo $_SESSION['formIncomeAmount'];
+									unset($_SESSION['formIncomeAmount']);
+								}
+							?>">
 						</div>
+						
+						<?php
+							if(isset($_SESSION['incomeAmountError'])) {
+								
+								echo '<div class="text-danger">'.$_SESSION['incomeAmountError'].'</div>';
+								unset($_SESSION['incomeAmountError']);
+							}
+						?>
 						
 						<div class="input-group my-3">
 							<div class="input-group-prepend px-1">
 								<span class="input-group-text">Date</span>
 							</div>
-							<input class="form-control  userInput labeledInput" type="date" id="dateInput" required>
+							<input class="form-control  userInput labeledInput" type="date" id="dateInput" name="incomeDate" value="<?php
+								if(isset($_SESSION['formIncomeDate'])) {
+									
+									echo $_SESSION['formIncomeDate'];
+									unset($_SESSION['formIncomeDate']);
+								}
+							?>" required>
 						</div>
 						
 						<div class="input-group my-3">
 							<div class="input-group-prepend px-1">
 								<span class="input-group-text">Category</span>
 							</div>
-							<select class="form-control userInput labeledInput" id="expenseCategory">
+							<select class="form-control userInput labeledInput" name="incomeCategory">
 								<?php
 									foreach ($incomeCategoriesOfLoggedUser as $category) {
-									echo "<option>{$category['income_category']}</option>";
+										
+										if(isset($_SESSION['formIncomeCategory']) && $_SESSION['formIncomeCategory'] == $category['income_category']) {
+											
+											echo '<option selected>'.$category['income_category']."</option>";
+											unset($_SESSION['formIncomeCategory']);
+										} else {
+											
+											echo "<option>".$category['income_category']."</option>";
+										}
 									}
 								?>
 							</select>
@@ -154,18 +249,34 @@ if(isset($_SESSION['loggedUserId'])) {
 							<div class="input-group-prepend px-1">
 								<span class="input-group-text">Commments<br />(optional)</span>
 							</div>
-							<textarea class="form-control userInput labeledInput" id="comment" rows="5"></textarea>
+							<textarea class="form-control userInput labeledInput" name="incomeComment" maxlength="100" rows="5"><?php
+									if(isset($_SESSION['formIncomeComment'])) {
+										
+										echo $_SESSION['formIncomeComment'];
+										unset($_SESSION['formIncomeComment']);
+									}
+								?></textarea>
 						</div>
+						
+						<?php
+							if(isset($_SESSION['commentError'])) {
+								
+								echo '<div class="text-danger">'.$_SESSION['commentError'].'</div>';
+								unset($_SESSION['commentError']);
+							}
+						?>
 						
 					</div>
 					
 					<div class="col-md-11">
-						<a class="btn btn-lg mt-3 mb-2 signButton bg-primary " href="#" role="button">
+						<button class="btn-lg mt-3 mb-2 mx-1 signButton bg-primary" type="submit">
 							<i class="icon-floppy"></i> Save
-						</a>
-						<a class="btn btn-lg mt-3 mb-2 bg-primary signButton" href="#" role="button">
-							<i class="icon-cancel-circled"></i> Cancel
-						</a>
+						</button>
+						<a data-toggle="modal" data-target="#discardIncomeModal">
+							<button class="btn-lg mt-3 mb-2 mx-1 signButton bg-danger">
+								<i class="icon-cancel-circled"></i> Cancel
+							</button>
+						</>
 					</div>
 					
 				</div>
@@ -185,7 +296,7 @@ if(isset($_SESSION['loggedUserId'])) {
 
 					<div class="modal-body">
 					
-						<form class="col py-3 mx-auto">
+						<form class="col py-3 mx-auto" method="post">
 				
 							<h5>Enter a start date and an end date of period that you want to review</h5>
 							
@@ -193,12 +304,12 @@ if(isset($_SESSION['loggedUserId'])) {
 							
 								<div class="form-group my-2">
 									<label for="dateInput1">Enter start date</label>
-									<input class="form-control  userInput labeledInput" type="date" id="dateInput1" required>
+									<input class="form-control  userInput labeledInput" type="date" id="dateInput1" name="startDate" required>
 								</div>
 								
 								<div class="form-group my-2">
 									<label for="dateInput2">Enter end date</label>
-									<input class="form-control  userInput labeledInput" type="date" id="dateInput2" required>
+									<input class="form-control  userInput labeledInput" type="date" id="dateInput2" name="endDate" required>
 								</div>
 								
 							</div>
@@ -216,6 +327,59 @@ if(isset($_SESSION['loggedUserId'])) {
 			</div>
 		</div>
 		
+		<?php
+		
+			if($_SESSION['incomeAdded'] == true){
+				echo "<script>$(document).ready(function(){ $('#incomeAdded').modal('show'); });</script>
+
+				<div class='modal fade' id='incomeAdded' role='dialog'>
+					<div class='modal-dialog col'>
+						<div class='modal-content'>
+							<div class='modal-header'>
+								<h3 class='modal-title'>New Income Added</h3>
+								<a href='income.php'>
+								<button type='button' class='close'>&times;</button>
+								</a>
+							</div>
+											
+							<div class='modal-body'>
+								<p>Your income has been successfully added.</p>
+							</div>
+							<div class='modal-footer'>
+								<a href='menu.php'>
+									<button type='button' class='btn btn-success'>OK</button>
+								</a>
+							</div>
+						</div>
+					</div>
+				</div>"; 
+			}
+		
+		?>
+		
+		<div class="modal hide fade in" data-backdrop="static" id="discardIncomeModal">
+			<div class='modal-dialog col'>
+				<div class='modal-content'>
+					<div class='modal-header'>
+						<h3 class='modal-title'>Quit Adding Income?</h3>
+						<a href='income.php'>
+						<button type='button' class='close'>&times;</button>
+						</a>
+					</div>
+											
+					<div class='modal-body'>
+						<p>Data you have entered so far will not be saved.</p>
+					</div>
+					<div class='modal-footer'>
+						<a href='menu.php'>
+							<button type='button' class='btn btn-success'>YES</button>
+						</a>
+						<button type="button" class="btn btn-danger" data-dismiss="modal">NO</button>
+					</div>
+				</div>
+			</div>
+		</div>
+		
 	</main>
 	
 	<footer>
@@ -225,8 +389,7 @@ if(isset($_SESSION['loggedUserId'])) {
 		</div>
 		
 	</footer>
-	
-	<script src="js/budget.js"></script>
+
 	<script src="https://code.jquery.com/jquery-3.4.1.slim.min.js" integrity="sha384-J6qa4849blE2+poT4WnyKhv5vZF5SrPo0iEjwBvKU7imGFAV0wwj1yYfoRSJoZ+n" crossorigin="anonymous"></script>
 	<script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js" integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo" crossorigin="anonymous"></script>
 	<script src="js/bootstrap.min.js"></script>

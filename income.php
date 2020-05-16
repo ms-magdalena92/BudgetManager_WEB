@@ -13,6 +13,8 @@ if(isset($_SESSION['loggedUserId'])) {
 	
 	$incomeCategoriesOfLoggedUser = $incomeCategoryQuery -> fetchAll();
 	
+	$_SESSION['incomeAdded'] = false;
+	
 	if(isset($_POST['incomeAmount'])) {
 		
 		if(!empty($_POST['incomeAmount'])) {
@@ -30,7 +32,7 @@ if(isset($_SESSION['loggedUserId'])) {
 			
 			$incomeComment = $_POST['incomeComment'];
 			
-			if(!empty($incomeComment) && !preg_match('/[^a-ząćęłńóśźżA-ZĄĆĘŁŃÓŚŹŻ0-9]/i', $incomeComment)) {
+			if(!empty($incomeComment) && !preg_match('/[a-ząćęłńóśźżA-ZĄĆĘŁŃÓŚŹŻ0-9]/i', $incomeComment)) {
 				$_SESSION['commentError'] = "Comment can contain up to 100 characters - only letters and numbers allowed.";
 				$positiveValidation = false;
 			}
@@ -46,6 +48,8 @@ if(isset($_SESSION['loggedUserId'])) {
 				'INSERT INTO incomes
 				VALUES (NULL, :userId, :incomeAmount, :incomeDate, (SELECT category_id FROM income_categories WHERE income_category=:incomeCategory), :incomeComment)');
 				$addIncomeQuery -> execute([':userId' => $_SESSION['loggedUserId'], ':incomeAmount' => $incomeAmount, ':incomeDate' => $_POST['incomeDate'], ':incomeCategory' => $_POST['incomeCategory'], ':incomeComment' => $incomeComment]);
+				
+				$_SESSION['incomeAdded'] = true;
 			}
 			
 		} else {
@@ -196,7 +200,7 @@ if(isset($_SESSION['loggedUserId'])) {
 									echo $_SESSION['formIncomeAmount'];
 									unset($_SESSION['formIncomeAmount']);
 								}
-							?>" required>
+							?>">
 						</div>
 						
 						<?php
@@ -268,9 +272,11 @@ if(isset($_SESSION['loggedUserId'])) {
 						<button class="btn-lg mt-3 mb-2 mx-1 signButton bg-primary" type="submit">
 							<i class="icon-floppy"></i> Save
 						</button>
-						<button class="btn-lg mt-3 mb-2 mx-1 signButton bg-danger" data-toggle="modal" data-target="#discardIncomeModal">
-							<i class="icon-cancel-circled"></i> Cancel
-						</button>
+						<a data-toggle="modal" data-target="#discardIncomeModal">
+							<button class="btn-lg mt-3 mb-2 mx-1 signButton bg-danger">
+								<i class="icon-cancel-circled"></i> Cancel
+							</button>
+						</>
 					</div>
 					
 				</div>
@@ -317,6 +323,59 @@ if(isset($_SESSION['loggedUserId'])) {
 						<button type="button" class="btn btn-danger" data-dismiss="modal">Close</button>
 					</div>
 
+				</div>
+			</div>
+		</div>
+		
+		<?php
+		
+			if($_SESSION['incomeAdded'] == true){
+				echo "<script>$(document).ready(function(){ $('#incomeAdded').modal('show'); });</script>
+
+				<div class='modal fade' id='incomeAdded' role='dialog'>
+					<div class='modal-dialog col'>
+						<div class='modal-content'>
+							<div class='modal-header'>
+								<h3 class='modal-title'>New Income Added</h3>
+								<a href='income.php'>
+								<button type='button' class='close'>&times;</button>
+								</a>
+							</div>
+											
+							<div class='modal-body'>
+								<p>Your income has been successfully added.</p>
+							</div>
+							<div class='modal-footer'>
+								<a href='menu.php'>
+									<button type='button' class='btn btn-success'>OK</button>
+								</a>
+							</div>
+						</div>
+					</div>
+				</div>"; 
+			}
+		
+		?>
+		
+		<div class="modal hide fade in" data-backdrop="static" id="discardIncomeModal">
+			<div class='modal-dialog col'>
+				<div class='modal-content'>
+					<div class='modal-header'>
+						<h3 class='modal-title'>Quit Adding Income?</h3>
+						<a href='income.php'>
+						<button type='button' class='close'>&times;</button>
+						</a>
+					</div>
+											
+					<div class='modal-body'>
+						<p>Data you have entered so far will not be saved.</p>
+					</div>
+					<div class='modal-footer'>
+						<a href='menu.php'>
+							<button type='button' class='btn btn-success'>YES</button>
+						</a>
+						<button type="button" class="btn btn-danger" data-dismiss="modal">NO</button>
+					</div>
 				</div>
 			</div>
 		</div>

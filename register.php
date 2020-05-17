@@ -144,7 +144,7 @@
 				
 					<div class="col-sm-8">
 					
-						<div class="input-group mt-3 mb-2">
+						<div class="input-group mt-3">
 							<div class="input-group-prepend px-1 pt-1 inputIcon">
 								<i class="icon-user"></i>
 							</div>
@@ -163,7 +163,7 @@
 							}
 						?>
 						
-						<div class="input-group mt-3 mb-2">
+						<div class="input-group mt-3">
 							<div class="input-group-prepend px-1 pt-1 inputIcon">
 								<i class="icon-mail-alt"></i>
 							</div>
@@ -182,7 +182,7 @@
 							}
 						?>
 						
-						<div class="input-group mt-3 mb-2">
+						<div class="input-group mt-3">
 							<div class="input-group-prepend px-1 pt-1 inputIcon">
 							<i class="icon-lock"></i>
 							</div>
@@ -201,7 +201,7 @@
 							}
 						?>
 						
-						<div class="input-group mt-3 mb-2">
+						<div class="input-group mt-3">
 							<div class="input-group-prepend px-1 pt-1 inputIcon">
 								<i class="icon-lock"></i>
 							</div>
@@ -210,7 +210,7 @@
 						</div>
 						
 						<div id="passwordCheck">
-							<input type="checkbox" onclick="showPassword()"> Show password
+							<input class="mt-3" type="checkbox" onclick="showPassword()"> Show password
 						</div>
 						
 						<button class="btn btn-lg mt-3 mb-2 signButton" type="submit" data-toggle="modal" data-target="#dateModal">

@@ -57,14 +57,14 @@ if(isset($_SESSION['loggedUserId'])) {
 					
 					<div class="col-sm-8">
 						
-						<div class="input-group mt-3 mb-2">
+						<div class="input-group mt-3">
 							<div class="input-group-prepend px-1 pt-1 inputIcon">
 								<i class="icon-mail-alt"></i>
 							</div>
 							<input class="form-control  userInput" type="email" id="loginInput" name="email" placeholder="email@address.com" required>
 						</div>
 							
-						<div class="input-group mt-3 mb-2">
+						<div class="input-group mt-3">
 							<div class="input-group-prepend px-1 pt-1 inputIcon">
 								<i class="icon-lock"></i>
 							</div>
@@ -72,7 +72,7 @@ if(isset($_SESSION['loggedUserId'])) {
 						</div>
 							
 						<div>
-							<input type="checkbox" onclick="showPassword()"> Show password
+							<input class="mt-3" type="checkbox" onclick="showPassword()"> Show password
 						</div>
 						
 						<button class="btn btn-lg mt-3 mb-2 signButton" type="submit" data-toggle="modal" data-target="#dateModal">

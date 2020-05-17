@@ -181,7 +181,7 @@ if(isset($_SESSION['loggedUserId'])) {
 							}
 						?>
 						
-						<div class="input-group my-3">
+						<div class="input-group mt-3">
 							<div class="input-group-prepend px-1">
 								<span class="input-group-text">Amount</span>
 							</div>
@@ -207,7 +207,7 @@ if(isset($_SESSION['loggedUserId'])) {
 							}
 						?>
 						
-						<div class="input-group my-3">
+						<div class="input-group mt-3">
 							<div class="input-group-prepend px-1">
 								<span class="input-group-text">Date</span>
 							</div>
@@ -219,7 +219,7 @@ if(isset($_SESSION['loggedUserId'])) {
 							?>" required>
 						</div>
 						
-						<div class="input-group my-3">
+						<div class="input-group mt-3">
 							<div class="input-group-prepend px-1">
 								<span class="input-group-text">Category</span>
 							</div>
@@ -240,7 +240,7 @@ if(isset($_SESSION['loggedUserId'])) {
 							</select>
 						</div>
 						
-						<div class="input-group my-3">
+						<div class="input-group mt-3">
 							<div class="input-group-prepend px-1">
 								<span class="input-group-text">Commments<br />(optional)</span>
 							</div>

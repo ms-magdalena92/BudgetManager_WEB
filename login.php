@@ -2,7 +2,6 @@
 session_start();
 	
 if(isset($_SESSION['loggedUserId'])) {
-	
 	header('Location: menu.php');
 	exit();
 }
@@ -33,7 +32,10 @@ if(isset($_SESSION['loggedUserId'])) {
 
 	<header>
 	
-		<h1 class="mt-3 mb-1" id="title"><a id="homeButton" href="index.php" role="button">Welcome to <span id="logo">MyBudget</span>.com!</a></h1>
+		<h1 class="mt-3 mb-1" id="title">
+			<a id="homeButton" href="index.php" role="button">Welcome to <span id="logo">MyBudget</span>.com!</a>
+		</h1>
+		
 		<p id="subtitle">Your Personal Finance Manager</p>
 		
 	</header>
@@ -47,8 +49,7 @@ if(isset($_SESSION['loggedUserId'])) {
 				<div class="row justify-content-around">
 					
 					<?php
-						if(isset($_SESSION['badAttempt']))
-						{
+						if(isset($_SESSION['badAttempt'])) {
 							echo '<div class="text-danger px-2">The username or password you have entered is incorrect.</div>';
 							unset($_SESSION['badAttempt']);
 						}

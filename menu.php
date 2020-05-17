@@ -10,18 +10,18 @@ if(!isset($_SESSION['loggedUserId'])) {
 		$email = filter_input(INPUT_POST, 'email', FILTER_SANITIZE_EMAIL);
 		$password = filter_input(INPUT_POST, 'password');
 	
-		$userQuery = $db -> prepare('SELECT user_id, password FROM users WHERE email = :email');
+		$userQuery = $db -> prepare(
+		"SELECT user_id, password
+		FROM users
+		WHERE email = :email");
 		$userQuery->execute([':email'=> $email]);
 		
 		$user = $userQuery -> fetch();
 
-		if($user && password_verify($password, 
-		$user['password'])) {
-			
+		if($user && password_verify($password, $user['password'])) {
 			$_SESSION['loggedUserId'] = $user['user_id'];
 			unset($_SESSION['badAttempt']);
 		} else {
-			
 			$_SESSION['badAttempt'] = "";
 			header ('Location: login.php');
 			exit();
@@ -60,7 +60,10 @@ if(!isset($_SESSION['loggedUserId'])) {
 
 	<header>
 	
-		<h1 class="mt-3 mb-1" id="title"><a id="homeButton" href="index.php" role="button">Welcome to <span id="logo">MyBudget</span>.com!</a></h1>
+		<h1 class="mt-3 mb-1" id="title">
+			<a id="homeButton" href="index.php" role="button">Welcome to <span id="logo">MyBudget</span>.com!</a>
+		</h1>
+		
 		<p id="subtitle">Your Personal Finance Manager</p>
 		
 	</header>

@@ -2,13 +2,12 @@
 session_start();
 
 if(isset($_SESSION['loggedUserId'])) {
-	
 	require_once 'database.php';
 	
 	$incomeCategoryQuery = $db -> prepare(
-	'SELECT ic.income_category
+	"SELECT ic.income_category
 	FROM income_categories ic NATURAL JOIN user_income_category uic
-	WHERE uic.user_id = :loggedUserId');
+	WHERE uic.user_id = :loggedUserId");
 	$incomeCategoryQuery -> execute([':loggedUserId'=> $_SESSION['loggedUserId']]);
 	
 	$incomeCategoriesOfLoggedUser = $incomeCategoryQuery -> fetchAll();
@@ -32,7 +31,7 @@ if(isset($_SESSION['loggedUserId'])) {
 			
 			$incomeComment = $_POST['incomeComment'];
 			
-			if(!empty($incomeComment) && !preg_match('/[a-ząćęłńóśźżA-ZĄĆĘŁŃÓŚŹŻ0-9]/i', $incomeComment)) {
+			if(!empty($incomeComment) && !preg_match('/^[A-ZĄĘÓŁŚŻŹĆŃa-ząęółśżźćń 0-9]+$/', $incomeComment)) {
 				$_SESSION['commentError'] = "Comment can contain up to 100 characters - only letters and numbers allowed.";
 				$positiveValidation = false;
 			}
@@ -45,21 +44,21 @@ if(isset($_SESSION['loggedUserId'])) {
 			if($positiveValidation == true) {
 
 				$addIncomeQuery = $db->prepare(
-				'INSERT INTO incomes
-				VALUES (NULL, :userId, :incomeAmount, :incomeDate, (SELECT category_id FROM income_categories WHERE income_category=:incomeCategory), :incomeComment)');
+				"INSERT INTO incomes
+				VALUES (NULL, :userId, :incomeAmount, :incomeDate,
+				(SELECT category_id FROM income_categories
+				WHERE income_category=:incomeCategory),
+				:incomeComment)");
 				$addIncomeQuery -> execute([':userId' => $_SESSION['loggedUserId'], ':incomeAmount' => $incomeAmount, ':incomeDate' => $_POST['incomeDate'], ':incomeCategory' => $_POST['incomeCategory'], ':incomeComment' => $incomeComment]);
 				
 				$_SESSION['incomeAdded'] = true;
 			}
-			
 		} else {
 				$_SESSION['emptyFieldError'] = "Please fill in all required fields.";
 				$_SESSION['incomeAmountError'] = "Amount of an income required.";
 		}
 	}
-	
 } else {
-	
 	header ("Location: index.php");
 	exit();
 }
@@ -177,26 +176,24 @@ if(isset($_SESSION['loggedUserId'])) {
 					
 						<?php
 							if(isset($_SESSION['emptyFieldError'])) {
-								
 								echo '<div class="text-danger">'.$_SESSION['emptyFieldError'].'</div>';
 								unset($_SESSION['emptyFieldError']);
 							}
 						?>
-						<div class="input-group my-3">
+						
+						<div class="input-group mt-3">
 							<div class="input-group-prepend px-1">
 								<span class="input-group-text">Amount</span>
 							</div>
 							
 							<?php
 							if(!isset($_SESSION['formIncomeAmount'])) {
-								
 									echo "<script>$(document).ready(function(){getCurrentDate();})</script>";
 								}
 							?>
 
 							<input class="form-control userInput labeledInput" type="number" name="incomeAmount" step="0.01" value="<?php
 								if(isset($_SESSION['formIncomeAmount'])) {
-									
 									echo $_SESSION['formIncomeAmount'];
 									unset($_SESSION['formIncomeAmount']);
 								}
@@ -205,33 +202,31 @@ if(isset($_SESSION['loggedUserId'])) {
 						
 						<?php
 							if(isset($_SESSION['incomeAmountError'])) {
-								
 								echo '<div class="text-danger">'.$_SESSION['incomeAmountError'].'</div>';
 								unset($_SESSION['incomeAmountError']);
 							}
 						?>
 						
-						<div class="input-group my-3">
+						<div class="input-group mt-3">
 							<div class="input-group-prepend px-1">
 								<span class="input-group-text">Date</span>
 							</div>
 							<input class="form-control  userInput labeledInput" type="date" id="dateInput" name="incomeDate" value="<?php
 								if(isset($_SESSION['formIncomeDate'])) {
-									
 									echo $_SESSION['formIncomeDate'];
 									unset($_SESSION['formIncomeDate']);
 								}
 							?>" required>
 						</div>
 						
-						<div class="input-group my-3">
+						<div class="input-group mt-3">
 							<div class="input-group-prepend px-1">
 								<span class="input-group-text">Category</span>
 							</div>
 							<select class="form-control userInput labeledInput" name="incomeCategory">
 								<?php
 									foreach ($incomeCategoriesOfLoggedUser as $category) {
-										
+									
 										if(isset($_SESSION['formIncomeCategory']) && $_SESSION['formIncomeCategory'] == $category['income_category']) {
 											
 											echo '<option selected>'.$category['income_category']."</option>";
@@ -245,7 +240,7 @@ if(isset($_SESSION['loggedUserId'])) {
 							</select>
 						</div>
 						
-						<div class="input-group my-3">
+						<div class="input-group mt-3">
 							<div class="input-group-prepend px-1">
 								<span class="input-group-text">Commments<br />(optional)</span>
 							</div>
@@ -260,7 +255,6 @@ if(isset($_SESSION['loggedUserId'])) {
 						
 						<?php
 							if(isset($_SESSION['commentError'])) {
-								
 								echo '<div class="text-danger">'.$_SESSION['commentError'].'</div>';
 								unset($_SESSION['commentError']);
 							}
@@ -328,7 +322,6 @@ if(isset($_SESSION['loggedUserId'])) {
 		</div>
 		
 		<?php
-		
 			if($_SESSION['incomeAdded'] == true){
 				echo "<script>$(document).ready(function(){ $('#incomeAdded').modal('show'); });</script>
 
@@ -354,7 +347,6 @@ if(isset($_SESSION['loggedUserId'])) {
 					</div>
 				</div>"; 
 			}
-		
 		?>
 		
 		<div class="modal hide fade in" data-backdrop="static" id="discardIncomeModal">

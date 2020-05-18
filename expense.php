@@ -20,6 +20,8 @@ if(isset($_SESSION['loggedUserId'])) {
 	
 	$paymentMethodsOfLoggedUser = $paymentMethodQuery -> fetchAll();
 	
+	$_SESSION['expenseAdded'] = false;
+	
 	if(isset($_POST['expenseAmount'])) {
 		
 		if(!empty($_POST['expenseAmount'])) {
@@ -301,7 +303,7 @@ if(isset($_SESSION['loggedUserId'])) {
 						<button class="btn-lg mt-3 mb-2 mx-1 signButton bg-primary" type="submit">
 							<i class="icon-floppy"></i> Save
 						</button>
-						<a data-toggle="modal" data-target="#discardIncomeModal">
+						<a data-toggle="modal" data-target="#discardExpenseModal">
 							<button class="btn-lg mt-3 mb-2 mx-1 signButton bg-danger">
 								<i class="icon-cancel-circled"></i> Cancel
 							</button>
@@ -352,6 +354,57 @@ if(isset($_SESSION['loggedUserId'])) {
 						<button type="button" class="btn btn-danger" data-dismiss="modal">Close</button>
 					</div>
 
+				</div>
+			</div>
+		</div>
+		
+		<?php
+			if($_SESSION['expenseAdded'] == true){
+				echo "<script>$(document).ready(function(){ $('#expenseAdded').modal('show'); });</script>
+
+				<div class='modal fade' id='expenseAdded' role='dialog'>
+					<div class='modal-dialog col'>
+						<div class='modal-content'>
+							<div class='modal-header'>
+								<h3 class='modal-title'>New Expense Added</h3>
+								<a href='income.php'>
+								<button type='button' class='close'>&times;</button>
+								</a>
+							</div>
+											
+							<div class='modal-body'>
+								<p>Your expense has been successfully added.</p>
+							</div>
+							<div class='modal-footer'>
+								<a href='menu.php'>
+									<button type='button' class='btn btn-success'>OK</button>
+								</a>
+							</div>
+						</div>
+					</div>
+				</div>"; 
+			}
+		?>
+		
+		<div class="modal hide fade in" data-backdrop="static" id="discardExpenseModal">
+			<div class='modal-dialog col'>
+				<div class='modal-content'>
+					<div class='modal-header'>
+						<h3 class='modal-title'>Quit Adding Expense?</h3>
+						<a href='expense.php'>
+						<button type='button' class='close'>&times;</button>
+						</a>
+					</div>
+											
+					<div class='modal-body'>
+						<p>Data you have entered so far will not be saved.</p>
+					</div>
+					<div class='modal-footer'>
+						<a href='menu.php'>
+							<button type='button' class='btn btn-success'>YES</button>
+						</a>
+						<button type="button" class="btn btn-danger" data-dismiss="modal">NO</button>
+					</div>
 				</div>
 			</div>
 		</div>

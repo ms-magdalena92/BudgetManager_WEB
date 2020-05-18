@@ -50,7 +50,20 @@ if(isset($_SESSION['loggedUserId'])) {
 			$_SESSION['formExpenseCategory'] = $_POST['expenseCategory'];
 			$_SESSION['formExpenseComment'] = $expenseComment;
 		
-			
+			if($positiveValidation == true) {
+
+				$addExpenseQuery = $db->prepare(
+				"INSERT INTO expenses
+				VALUES (NULL, :userId, :expenseAmount, :expenseDate,
+				(SELECT payment_method_id FROM payment_methods
+				WHERE payment_method=:expensePaymentMethod),
+				(SELECT category_id FROM expense_categories
+				WHERE expense_category=:expenseCategory),
+				:expenseComment)");
+				$addExpenseQuery -> execute([':userId' => $_SESSION['loggedUserId'], ':expenseAmount' => $expenseAmount, ':expenseDate' => $_POST['expenseDate'], ':expensePaymentMethod' => $_POST['expensePaymentMethod'], ':expenseCategory' => $_POST['expenseCategory'], ':expenseComment' => $expenseComment]);
+				
+				$_SESSION['expenseAdded'] = true;
+			}
 		} else {
 				$_SESSION['emptyFieldError'] = "Please fill in all required fields.";
 				$_SESSION['expenseAmountError'] = "Amount of an expense required.";

@@ -43,6 +43,14 @@ if(isset($_SESSION['loggedUserId'])) {
 				$positiveValidation = false;
 			}
 			
+			
+			$_SESSION['formExpenseAmount'] = $expenseAmount;
+			$_SESSION['formExpenseDate'] = $_POST['expenseDate'];
+			$_SESSION['formExpensePaymentMethod'] = $_POST['expensePaymentMethod'];
+			$_SESSION['formExpenseCategory'] = $_POST['expenseCategory'];
+			$_SESSION['formExpenseComment'] = $expenseComment;
+		
+			
 		} else {
 				$_SESSION['emptyFieldError'] = "Please fill in all required fields.";
 				$_SESSION['expenseAmountError'] = "Amount of an expense required.";
@@ -178,7 +186,12 @@ if(isset($_SESSION['loggedUserId'])) {
 							<div class="input-group-prepend px-1">
 								<span class="input-group-text">Amount</span>
 							</div>
-							<input class="form-control userInput labeledInput" type="number" name="expenseAmount" step="0.01">
+							<input class="form-control userInput labeledInput" type="number" name="expenseAmount" step="0.01" value="<?php
+								if(isset($_SESSION['formExpeseAmount'])) {
+									echo $_SESSION['formExpeseAmount'];
+									unset($_SESSION['formExpeseAmount']);
+								}
+							?>">
 						</div>
 						
 						<?php
@@ -192,17 +205,37 @@ if(isset($_SESSION['loggedUserId'])) {
 							<div class="input-group-prepend px-1">
 								<span class="input-group-text">Date</span>
 							</div>
-							<input class="form-control  userInput labeledInput" type="date" name="expenseDate" id="dateInput" required>
+							
+							<?php
+							if(!isset($_SESSION['formExpenseDate'])) {
+									echo "<script>$(document).ready(function(){getCurrentDate();})</script>";
+								}
+							?>
+							
+							<input class="form-control  userInput labeledInput" type="date" name="expenseDate" id="dateInput" value="<?php
+								if(isset($_SESSION['formExpenseDate'])) {
+									echo $_SESSION['formExpenseDate'];
+									unset($_SESSION['formExpenseDate']);
+								}
+							?>" required>
 						</div>
 						
 						<div class="input-group mt-3">
 							<div class="input-group-prepend px-1">
 								<span class="input-group-text">Payment Method</span>
 							</div>
-							<select class="form-control userInput labeledInput" name="paymentMethod">
+							<select class="form-control userInput labeledInput" name="expensePaymentMethod">
 								<?php
 									foreach ($paymentMethodsOfLoggedUser as $payment_method) {
-									echo "<option>{$payment_method['payment_method']}</option>";
+									
+										if(isset($_SESSION['formExpensePaymentMethod']) && $_SESSION['formExpensePaymentMethod'] == $payment_method['payment_method']) {
+											
+											echo '<option selected>'.$payment_method['payment_method'].'</option>';
+											unset($_SESSION['formExpensePaymentMethod']);
+										} else {
+											
+											echo '<option>'.$payment_method['payment_method'].'</option>';
+										}
 									}
 								?>
 							</select>
@@ -215,7 +248,15 @@ if(isset($_SESSION['loggedUserId'])) {
 							<select class="form-control userInput labeledInput" name="expenseCategory">
 								<?php
 									foreach ($expenseCategoriesOfLoggedUser as $category) {
-									echo "<option>{$category['expense_category']}</option>";
+									
+										if(isset($_SESSION['formExpenseCategory']) && $_SESSION['formExpenseCategory'] == $category['expense_category']) {
+											
+											echo '<option selected>'.$category['expense_category']."</option>";
+											unset($_SESSION['formExpenseCategory']);
+										} else {
+											
+											echo "<option>".$category['expense_category']."</option>";
+										}
 									}
 								?>
 							</select>
@@ -225,7 +266,13 @@ if(isset($_SESSION['loggedUserId'])) {
 							<div class="input-group-prepend px-1">
 								<span class="input-group-text">Commments<br />(optional)</span>
 							</div>
-							<textarea class="form-control userInput labeledInput" name="expenseComment" rows="5"></textarea>
+							<textarea class="form-control userInput labeledInput" name="expenseComment" rows="5"><?php
+									if(isset($_SESSION['formExpenseComment'])) {
+										
+										echo $_SESSION['formExpenseComment'];
+										unset($_SESSION['formExpenseComment']);
+									}
+								?></textarea>
 						</div>
 						
 						<?php

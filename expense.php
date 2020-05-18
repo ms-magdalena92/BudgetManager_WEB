@@ -2,18 +2,52 @@
 session_start();
 
 if(isset($_SESSION['loggedUserId'])) {
-	
 	require_once 'database.php';
 	
-	$expenseCategoryQuery = $db -> prepare('SELECT ec.expense_category FROM expense_categories ec NATURAL JOIN user_expense_category uec WHERE uec.user_id = :loggedUserId');
+	$expenseCategoryQuery = $db -> prepare(
+	"SELECT ec.expense_category
+	FROM expense_categories ec NATURAL JOIN user_expense_category uec
+	WHERE uec.user_id = :loggedUserId");
 	$expenseCategoryQuery -> execute([':loggedUserId'=> $_SESSION['loggedUserId']]);
 	
 	$expenseCategoriesOfLoggedUser = $expenseCategoryQuery -> fetchAll();
 	
-	$paymentMethodQuery = $db -> prepare('SELECT pm.payment_method FROM payment_methods pm NATURAL JOIN user_payment_method upm WHERE upm.user_id = :loggedUserId');
+	$paymentMethodQuery = $db -> prepare(
+	"SELECT pm.payment_method
+	FROM payment_methods pm NATURAL JOIN user_payment_method upm
+	WHERE upm.user_id = :loggedUserId");
 	$paymentMethodQuery -> execute([':loggedUserId'=> $_SESSION['loggedUserId']]);
 	
 	$paymentMethodsOfLoggedUser = $paymentMethodQuery -> fetchAll();
+	
+	if(isset($_POST['expenseAmount'])) {
+		
+		if(!empty($_POST['expenseAmount'])) {
+				
+			$positiveValidation = true;
+			
+			$expenseAmount = number_format($_POST['expenseAmount'], 2, '.', '');
+			$expenseAmount = number_format($_POST['expenseAmount'], 2, '.', '');
+			$amount = explode('.', $expenseAmount);
+				
+			if(!is_numeric($expenseAmount) || strlen($expenseAmount) > 9 || $expenseAmount < 0 || !(isset($amount[1]) && strlen($amount[1]) == 2)) {
+					
+				$_SESSION['expenseAmountError'] = "Enter valid positive amount - maximum 6 integer digits and 2 decimal places.";
+				$positiveValidation = false;
+			}
+			
+			$expenseComment = $_POST['expenseComment'];
+			
+			if(!empty($expenseComment) && !preg_match('/^[A-ZĄĘÓŁŚŻŹĆŃa-ząęółśżźćń 0-9]+$/', $expenseComment)) {
+				$_SESSION['commentError'] = "Comment can contain up to 100 characters - only letters and numbers allowed.";
+				$positiveValidation = false;
+			}
+			
+		} else {
+				$_SESSION['emptyFieldError'] = "Please fill in all required fields.";
+				$_SESSION['expenseAmountError'] = "Amount of an expense required.";
+		}
+	}
 } else {
 	
 	header ("Location: index.php");
@@ -35,6 +69,8 @@ if(isset($_SESSION['loggedUserId'])) {
 	
 	<meta http-equiv="X-Ua-Compatible" content="IE=edge">
 	
+	<script src="js/budget.js"></script>
+	<script src="https://code.jquery.com/jquery-3.4.1.slim.min.js" integrity="sha384-J6qa4849blE2+poT4WnyKhv5vZF5SrPo0iEjwBvKU7imGFAV0wwj1yYfoRSJoZ+n" crossorigin="anonymous"></script>
 	<link rel="stylesheet" href="css/bootstrap.min.css">
 	<link rel="stylesheet" href="css/main.css">
 	<link rel="stylesheet" href="css/fontello.css">
@@ -42,11 +78,14 @@ if(isset($_SESSION['loggedUserId'])) {
 	
 </head>
 
-<body onload="getCurrentDate()">
+<body>
 	
 	<header>
 	
-		<h1 class="mt-3 mb-1" id="title"><a id="homeButton" href="index.php" role="button">Welcome to <span id="logo">MyBudget</span>.com!</a></h1>
+		<h1 class="mt-3 mb-1" id="title">
+			<a id="homeButton" href="index.php" role="button">Welcome to <span id="logo">MyBudget</span>.com!</a>
+		</h1>
+		
 		<p id="subtitle">Your Personal Finance Manager</p>
 		
 	</header>
@@ -120,7 +159,7 @@ if(isset($_SESSION['loggedUserId'])) {
 		
 		<section class="container-fluid square my-4 py-4">
 		
-			<form class="col-sm-10 col-md-8 col-lg-6 py-3 mx-auto">
+			<form class="col-sm-10 col-md-8 col-lg-6 py-3 mx-auto" method="post">
 				
 				<h3>ADDING AN EXPENSE</h3>
 				
@@ -128,25 +167,39 @@ if(isset($_SESSION['loggedUserId'])) {
 				
 					<div class="col-sm-10 col-lg-8">
 					
+						<?php
+							if(isset($_SESSION['emptyFieldError'])) {
+								echo '<div class="text-danger">'.$_SESSION['emptyFieldError'].'</div>';
+								unset($_SESSION['emptyFieldError']);
+							}
+						?>
+						
 						<div class="input-group mt-3">
 							<div class="input-group-prepend px-1">
 								<span class="input-group-text">Amount</span>
 							</div>
-							<input class="form-control userInput labeledInput" type="number" id="expenseInput" step="0.01" required>
+							<input class="form-control userInput labeledInput" type="number" name="expenseAmount" step="0.01">
 						</div>
+						
+						<?php
+							if(isset($_SESSION['expenseAmountError'])) {
+								echo '<div class="text-danger">'.$_SESSION['expenseAmountError'].'</div>';
+								unset($_SESSION['expenseAmountError']);
+							}
+						?>
 						
 						<div class="input-group mt-3">
 							<div class="input-group-prepend px-1">
 								<span class="input-group-text">Date</span>
 							</div>
-							<input class="form-control  userInput labeledInput" type="date" id="dateInput" required>
+							<input class="form-control  userInput labeledInput" type="date" name="expenseDate" id="dateInput" required>
 						</div>
 						
 						<div class="input-group mt-3">
 							<div class="input-group-prepend px-1">
 								<span class="input-group-text">Payment Method</span>
 							</div>
-							<select class="form-control userInput labeledInput" id="paymentMethod">
+							<select class="form-control userInput labeledInput" name="paymentMethod">
 								<?php
 									foreach ($paymentMethodsOfLoggedUser as $payment_method) {
 									echo "<option>{$payment_method['payment_method']}</option>";
@@ -159,7 +212,7 @@ if(isset($_SESSION['loggedUserId'])) {
 							<div class="input-group-prepend px-1">
 								<span class="input-group-text">Category</span>
 							</div>
-							<select class="form-control userInput labeledInput" id="expenseCategory">
+							<select class="form-control userInput labeledInput" name="expenseCategory">
 								<?php
 									foreach ($expenseCategoriesOfLoggedUser as $category) {
 									echo "<option>{$category['expense_category']}</option>";
@@ -172,17 +225,26 @@ if(isset($_SESSION['loggedUserId'])) {
 							<div class="input-group-prepend px-1">
 								<span class="input-group-text">Commments<br />(optional)</span>
 							</div>
-							<textarea class="form-control userInput labeledInput" id="comment" rows="5"></textarea>
+							<textarea class="form-control userInput labeledInput" name="expenseComment" rows="5"></textarea>
 						</div>
+						
+						<?php
+							if(isset($_SESSION['commentError'])) {
+								echo '<div class="text-danger">'.$_SESSION['commentError'].'</div>';
+								unset($_SESSION['commentError']);
+							}
+						?>
 						
 					</div>
 					
 					<div class="col-md-11">
-						<a class="btn btn-lg mt-3 mb-2 signButton bg-primary " href="#" role="button">
+						<button class="btn-lg mt-3 mb-2 mx-1 signButton bg-primary" type="submit">
 							<i class="icon-floppy"></i> Save
-						</a>
-						<a class="btn btn-lg mt-3 mb-2 bg-primary signButton" href="#" role="button">
-							<i class="icon-cancel-circled"></i> Cancel
+						</button>
+						<a data-toggle="modal" data-target="#discardIncomeModal">
+							<button class="btn-lg mt-3 mb-2 mx-1 signButton bg-danger">
+								<i class="icon-cancel-circled"></i> Cancel
+							</button>
 						</a>
 					</div>
 					
@@ -244,8 +306,6 @@ if(isset($_SESSION['loggedUserId'])) {
 		
 	</footer>
 	
-	<script src="js/budget.js"></script>
-	<script src="https://code.jquery.com/jquery-3.4.1.slim.min.js" integrity="sha384-J6qa4849blE2+poT4WnyKhv5vZF5SrPo0iEjwBvKU7imGFAV0wwj1yYfoRSJoZ+n" crossorigin="anonymous"></script>
 	<script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js" integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo" crossorigin="anonymous"></script>
 	<script src="js/bootstrap.min.js"></script>
 	

@@ -185,13 +185,6 @@ if(isset($_SESSION['loggedUserId'])) {
 							<div class="input-group-prepend px-1">
 								<span class="input-group-text">Amount</span>
 							</div>
-							
-							<?php
-							if(!isset($_SESSION['formIncomeAmount'])) {
-									echo "<script>$(document).ready(function(){getCurrentDate();})</script>";
-								}
-							?>
-
 							<input class="form-control userInput labeledInput" type="number" name="incomeAmount" step="0.01" value="<?php
 								if(isset($_SESSION['formIncomeAmount'])) {
 									echo $_SESSION['formIncomeAmount'];
@@ -211,6 +204,11 @@ if(isset($_SESSION['loggedUserId'])) {
 							<div class="input-group-prepend px-1">
 								<span class="input-group-text">Date</span>
 							</div>
+							<?php
+							if(!isset($_SESSION['formIncomeDate'])) {
+									echo "<script>$(document).ready(function(){getCurrentDate();})</script>";
+								}
+							?>
 							<input class="form-control  userInput labeledInput" type="date" id="dateInput" name="incomeDate" value="<?php
 								if(isset($_SESSION['formIncomeDate'])) {
 									echo $_SESSION['formIncomeDate'];
@@ -270,7 +268,7 @@ if(isset($_SESSION['loggedUserId'])) {
 							<button class="btn-lg mt-3 mb-2 mx-1 signButton bg-danger">
 								<i class="icon-cancel-circled"></i> Cancel
 							</button>
-						</>
+						</a>
 					</div>
 					
 				</div>
@@ -382,7 +380,6 @@ if(isset($_SESSION['loggedUserId'])) {
 		
 	</footer>
 
-	<script src="https://code.jquery.com/jquery-3.4.1.slim.min.js" integrity="sha384-J6qa4849blE2+poT4WnyKhv5vZF5SrPo0iEjwBvKU7imGFAV0wwj1yYfoRSJoZ+n" crossorigin="anonymous"></script>
 	<script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js" integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo" crossorigin="anonymous"></script>
 	<script src="js/bootstrap.min.js"></script>
 	

@@ -2,21 +2,28 @@
 session_start();
 
 if(isset($_SESSION['loggedUserId'])) {
+	
 	require_once 'database.php';
 	
-	$balanceQuery = $db -> prepare(
-	"SELECT e.category_id, ec.expense_category, SUM(e.expense_amount)
-	FROM expenses e NATURAL JOIN expense_categories ec
-	WHERE e.user_id=:loggedUserId
-	GROUP BY e.category_id
-	ORDER BY SUM(e.expense_amount) DESC");
-	$balanceQuery -> execute([':loggedUserId'=> $_SESSION['loggedUserId']]);
-	
-	$expensesOfLoggedUser = $balanceQuery -> fetchAll();
-	
+	if(isset($_GET['startDate'])) {
+		$balanceQuery = $db -> prepare(
+		"SELECT e.category_id, ec.expense_category, SUM(e.expense_amount)
+		FROM expenses e NATURAL JOIN expense_categories ec
+		WHERE e.user_id=:loggedUserId AND e.expense_date BETWEEN :startDate AND :endDate
+		GROUP BY e.category_id
+		ORDER BY SUM(e.expense_amount) DESC");
+		$balanceQuery -> execute([':loggedUserId'=> $_SESSION['loggedUserId'], ':startDate'=> $_GET['startDate'], ':endDate'=> $_GET['endDate']]);
+		
+		$expensesOfLoggedUser = $balanceQuery -> fetchAll();
+	} else {
+		
+		header ("Location: menu.php");
+		exit();
+	}
 } else {
-	
+
 	header ("Location: index.php");
+	exit();
 }
 	
 ?>
@@ -69,7 +76,7 @@ if(isset($_SESSION['loggedUserId'])) {
 			
 					<ul class="navbar-nav mx-auto">
 					
-						<li class="col-lg-2 nav-item disabled">
+						<li class="col-lg-2 nav-item">
 							<a class="nav-link" href="menu.php"><i class="icon-home"></i> Home</a>
 						</li>
 						
@@ -81,13 +88,28 @@ if(isset($_SESSION['loggedUserId'])) {
 							<a class="nav-link" href="expense.php"><i class="icon-dollar"></i> Add Expense</a>
 						</li>
 						
-						<li class="col-lg-2 nav-item dropdown">
+						<li class="col-lg-2 nav-item dropdown disabled">
 							<a class="nav-link" href="#" role="button"><i class="icon-chart-pie"></i> View Balance</a>
 							<div class="dropdown-menu bg-transparent border-0 m-0 p-0">
 							
-								<a class="dropdown-item" href="balance.php">Current Month</a>
-								<a class="dropdown-item" href="balance.php">Last Month</a>
-								<a class="dropdown-item" href="balance.php">Current Year</a>
+								<?php
+									$startDate = date('Y-m-01');
+									$endDate = date('Y-m-t');
+							
+									echo '<a class="dropdown-item" href="balance.php?startDate='.$startDate.'&endDate='.$endDate.'">Current Month</a>';
+								?>
+								<?php
+									$startDate = date('Y-m-01', strtotime("last month"));
+									$endDate = date('Y-m-t', strtotime("last month"));
+							
+									echo '<a class="dropdown-item" href="balance.php?startDate='.$startDate.'&endDate='.$endDate.'">Last Month</a>';
+								?>
+								<?php
+									$startDate = date('Y-01-01');
+									$endDate = date('Y-12-31');
+							
+									echo '<a class="dropdown-item" href="balance.php?startDate='.$startDate.'&endDate='.$endDate.'">Current Year</a>';
+								?>
 								<a class="dropdown-item" href="balance.php" data-toggle="modal" data-target="#dateModal">Custom</a>
 							
 							</div>
@@ -126,9 +148,11 @@ if(isset($_SESSION['loggedUserId'])) {
 			
 			<div class="row justify-content-md-center py-3">
 			
-				<div class="col-12 timePeriod py-3">
-				
-					<h2>CURRENT MONTH</h2>
+				<div class="col-12 timePeriod pt-3 pb-2">
+					
+					<?php
+						echo "<h5>TIME PERIOD:&emsp;".$_GET['startDate']."  -  ".$_GET['endDate']."</h5>";
+					?>
 					
 					<div class="btn-group m-2 mr-4 dateButton">
 						<button type="button" class="btn"><i class="icon-calendar"></i> Choose Date</button>
@@ -136,10 +160,26 @@ if(isset($_SESSION['loggedUserId'])) {
 						<span class="sr-only">Expand the list</span>
 						</button>
 						<div class="dropdown-menu bg-transparent border-0 m-0 p-0 dropdown-menu-right">
-							<a class="dropdown-item" href="balance.php">Current Month</a>
-							<a class="dropdown-item" href="balance.php">Last Month</a>
-							<a class="dropdown-item" href="balance.php">Current Year</a>
-							<a class="dropdown-item" href="balance.php" data-toggle="modal" data-target="#dateModal">Custom</a>
+						
+							<?php
+								$startDate = date('Y-m-01');
+								$endDate = date('Y-m-t');
+							
+								echo '<a class="dropdown-item" href="balance.php?startDate='.$startDate.'&endDate='.$endDate.'">Current Month</a>';
+							?>
+							<?php
+								$startDate = date('Y-m-01', strtotime("last month"));
+								$endDate = date('Y-m-t', strtotime("last month"));
+							
+								echo '<a class="dropdown-item " href="balance.php?startDate='.$startDate.'&endDate='.$endDate.'">Last Month</a>';
+							?>
+							<?php
+								$startDate = date('Y-01-01');
+								$endDate = date('Y-12-31');
+							
+								echo '<a class="dropdown-item" href="balance.php?startDate='.$startDate.'&endDate='.$endDate.'">Current Year</a>';
+							?>
+							<a class="dropdown-item" data-toggle="modal" data-target="#dateModal">Custom</a>
 						</div>
 					</div>
 					
@@ -174,8 +214,9 @@ if(isset($_SESSION['loggedUserId'])) {
 									$tableRowsQuery = $db -> prepare(
 									"SELECT e.expense_date, e.expense_amount, pm.payment_method, e.expense_comment
 									FROM expenses e NATURAL JOIN payment_methods pm
-									WHERE e.category_id=:expenseCategoryId AND e.user_id=:loggedUserId");
-									$tableRowsQuery -> execute([':loggedUserId' => $_SESSION['loggedUserId'], ':expenseCategoryId' => $expenses['category_id']]);
+									WHERE e.category_id=:expenseCategoryId AND e.user_id=:loggedUserId AND e.expense_date BETWEEN :startDate AND :endDate
+									ORDER BY e.expense_date ASC");
+									$tableRowsQuery -> execute([':loggedUserId' => $_SESSION['loggedUserId'], ':expenseCategoryId' => $expenses['category_id'], ':startDate'=> $_GET['startDate'], ':endDate'=> $_GET['endDate']]);
 									
 									$expensesOfSpecificCategory = $tableRowsQuery -> fetchAll();
 									
@@ -216,34 +257,34 @@ if(isset($_SESSION['loggedUserId'])) {
 						<button type="button" class="close" data-dismiss="modal">&times;</button>
 					</div>
 
-					<div class="modal-body">
+					<form class="col py-3 mx-auto" action="balance.php" method="get">
 					
-						<form class="col py-3 mx-auto">
-				
-							<h5>Enter a start date and an end date of period that you want to review</h5>
-							
-							<div class="row justify-content-around py-2">
-							
-								<div class="form-group my-2">
-									<label for="dateInput1">Enter start date</label>
-									<input class="form-control  userInput labeledInput" type="date" id="dateInput1" required>
-								</div>
-								
-								<div class="form-group my-2">
-									<label for="dateInput2">Enter end date</label>
-									<input class="form-control  userInput labeledInput" type="date" id="dateInput2" required>
-								</div>
-								
-							</div>
-							
-						</form>
+						<div class="modal-body">
 						
-					</div>
+							<h5>Enter a start date and an end date of period that you want to review</h5>
+								
+							<div class="row justify-content-around py-2">
+								
+								<div class="form-group my-2">
+									<label for="startDate">Enter start date</label>
+									<input class="form-control  userInput labeledInput" type="date" name="startDate" required>
+								</div>
+									
+								<div class="form-group my-2">
+									<label for="endDate">Enter end date</label>
+									<input class="form-control userInput labeledInput" type="date" name="endDate" required>
+								</div>
+									
+							</div>
+								
+						</div>
 
-					<div class="modal-footer">
-						<button type="button" class="btn btn-primary" >Save</button>
-						<button type="button" class="btn btn-danger" data-dismiss="modal">Close</button>
-					</div>
+						<div class="modal-footer">
+							<button class="btn btn-primary" type="submit">Save</button>
+							<button type="button" class="btn btn-danger" data-dismiss="modal">Close</button>
+						</div>
+							
+					</form>
 
 				</div>
 			</div>

@@ -28,6 +28,13 @@ if(!isset($_SESSION['loggedUserId'])) {
 		}
 	
 	} else {
+		header ('Location: balance.php?startDate='.$startDate.'&endDate='.$endDate);
+		exit();
+	}
+	
+	if(isset($_POST['startDate'])) {
+		$startDate = $_POST['startDate'];
+		$endDate = $_POST['endDate'];
 		header ('Location: login.php');
 		exit();
 	}
@@ -97,10 +104,25 @@ if(!isset($_SESSION['loggedUserId'])) {
 							<a class="nav-link" href="#" role="button"><i class="icon-chart-pie"></i> View Balance</a>
 							<div class="dropdown-menu bg-transparent border-0 m-0 p-0">
 							
-								<a class="dropdown-item" href="balance.php">Current Month</a>
-								<a class="dropdown-item" href="balance.php">Last Month</a>
-								<a class="dropdown-item" href="balance.php">Current Year</a>
-								<a class="dropdown-item" href="balance.php" data-toggle="modal" data-target="#dateModal">Custom</a>
+								<?php
+									$startDate = date('Y-m-01');
+									$endDate = date('Y-m-t');
+							
+									echo '<a class="dropdown-item" href="balance.php?startDate='.$startDate.'&endDate='.$endDate.'">Current Month</a>';
+								?>
+								<?php
+									$startDate = date('Y-m-01', strtotime("last month"));
+									$endDate = date('Y-m-t', strtotime("last month"));
+							
+									echo '<a class="dropdown-item" href="balance.php?startDate='.$startDate.'&endDate='.$endDate.'">Last Month</a>';
+								?>
+								<?php
+									$startDate = date('Y-01-01');
+									$endDate = date('Y-12-31');
+							
+									echo '<a class="dropdown-item" href="balance.php?startDate='.$startDate.'&endDate='.$endDate.'">Current Year</a>';
+								?>
+								<a class="dropdown-item" href="#" data-toggle="modal" data-target="#dateModal">Custom</a>
 							
 							</div>
 						</li>
@@ -149,34 +171,34 @@ if(!isset($_SESSION['loggedUserId'])) {
 						<button type="button" class="close" data-dismiss="modal">&times;</button>
 					</div>
 
-					<div class="modal-body">
+					<form class="col py-3 mx-auto" action="balance.php" method="get">
 					
-						<form class="col py-3 mx-auto">
-				
-							<h5>Enter a start date and an end date of period that you want to review</h5>
-							
-							<div class="row justify-content-around py-2">
-							
-								<div class="form-group my-2">
-									<label for="dateInput1">Enter start date</label>
-									<input class="form-control  userInput labeledInput" type="date" id="dateInput1" required>
-								</div>
-								
-								<div class="form-group my-2">
-									<label for="dateInput2">Enter end date</label>
-									<input class="form-control  userInput labeledInput" type="date" id="dateInput2" required>
-								</div>
-								
-							</div>
-							
-						</form>
+						<div class="modal-body">
 						
-					</div>
+							<h5>Enter a start date and an end date of period that you want to review</h5>
+								
+							<div class="row justify-content-around py-2">
+								
+								<div class="form-group my-2">
+									<label for="startDate">Enter start date</label>
+									<input class="form-control  userInput labeledInput" type="date" name="startDate" required>
+								</div>
+									
+								<div class="form-group my-2">
+									<label for="endDate">Enter end date</label>
+									<input class="form-control userInput labeledInput" type="date" name="endDate" required>
+								</div>
+									
+							</div>
+								
+						</div>
 
-					<div class="modal-footer">
-						<button type="button" class="btn btn-primary" >Save</button>
-						<button type="button" class="btn btn-danger" data-dismiss="modal">Close</button>
-					</div>
+						<div class="modal-footer">
+							<button class="btn btn-primary" type="submit">Save</button>
+							<button type="button" class="btn btn-danger" data-dismiss="modal">Close</button>
+						</div>
+							
+					</form>
 
 				</div>
 			</div>

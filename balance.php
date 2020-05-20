@@ -1,3 +1,26 @@
+<?php
+session_start();
+
+if(isset($_SESSION['loggedUserId'])) {
+	require_once 'database.php';
+	
+	$balanceQuery = $db -> prepare(
+	"SELECT e.category_id, ec.expense_category, SUM(e.expense_amount)
+	FROM expenses e NATURAL JOIN expense_categories ec
+	WHERE e.user_id=:loggedUserId
+	GROUP BY e.category_id
+	ORDER BY SUM(e.expense_amount) DESC");
+	$balanceQuery -> execute([':loggedUserId'=> $_SESSION['loggedUserId']]);
+	
+	$expensesOfLoggedUser = $balanceQuery -> fetchAll();
+	
+} else {
+	
+	header ("Location: index.php");
+}
+	
+?>
+
 <!DOCTYPE html>
 
 <html lang="pl">
@@ -19,11 +42,15 @@
 
 </head>
 
-<body onload="pageLoad(); getCurrentDate()" onresize="pageResize()">
+<!-- <body onload="pageLoad(); getCurrentDate()" onresize="pageResize()"> -->
+<body>
 	
 	<header>
 	
-		<h1 class="mt-3 mb-1" id="title"><a id="homeButton" href="index.php" role="button">Welcome to <span id="logo">MyBudget</span>.com!</a></h1>
+		<h1 class="mt-3 mb-1" id="title">
+			<a id="homeButton" href="index.php" role="button">Welcome to <span id="logo">MyBudget</span>.com!</a>
+		</h1>
+		
 		<p id="subtitle">Your Personal Finance Manager</p>
 		
 	</header>
@@ -122,7 +149,46 @@
 			
 			<div class="row justify-content-center" id="tables">
 				<div class="table-responsive col-md-6" id="tableIncomes"></div>
-				<div class="table-responsive col-md-6" id="tableExpenses"></div>
+				<div class="table-responsive col-md-6" id="tableExpenses">
+				
+					<table class="table-sm col-lg-10 mx-auto my-2">
+						<tbody>
+							<thead class="thead-dark">
+								<caption>Expenses</caption>
+								<tr>
+									<th class="category">Category</th>
+									<th class="amount">Amount</th>
+									<th></th>
+									<th></th>
+								</tr>
+							</thead>
+							
+							<?php
+								$totalExpenses = 0;
+								
+								foreach ($expensesOfLoggedUser as $expenses) {
+									echo "<tr class=\"summary\"><td class=\"category\">{$expenses['expense_category']}</td><td class=\"sum\">{$expenses['SUM(e.expense_amount)']} PLN</td></tr>";
+									
+									$totalExpenses += $expenses['SUM(e.expense_amount)'];
+									
+									$tableRowsQuery = $db -> prepare(
+									"SELECT e.expense_date, e.expense_amount, pm.payment_method, e.expense_comment
+									FROM expenses e NATURAL JOIN payment_methods pm
+									WHERE e.category_id=:expenseCategoryId AND e.user_id=:loggedUserId");
+									$tableRowsQuery -> execute([':loggedUserId' => $_SESSION['loggedUserId'], ':expenseCategoryId' => $expenses['category_id']]);
+									
+									$expensesOfSpecificCategory = $tableRowsQuery -> fetchAll();
+									
+									foreach ($expensesOfSpecificCategory as $categoryExpense) {
+										echo "<tr><td class=\"date\">{$categoryExpense['expense_date']}</td><td class=\"amount\">{$categoryExpense['expense_amount']} PLN</td><td class=\"payment\">{$categoryExpense['payment_method']}</td><td class=\"comment\">{$categoryExpense['expense_comment']}</td></tr>";
+									}
+								}
+								
+								echo "<tr class=\"summary\"><td class=\"total\">TOTAL</td><td class=\"sum\">{$totalExpenses} PLN</td></tr>";
+							?>
+						</tbody>
+					</table>
+				</div>
 			</div>
 			
 			<div class="row col-sm-6 col-lg-4 justify-content-center mt-5 mb-2 mx-auto box">

@@ -28,7 +28,6 @@ if(!isset($_SESSION['loggedUserId'])) {
 		}
 	
 	} else {
-		$_SESSION['badAttempt'] = "";
 		header ('Location: login.php');
 		exit();
 	}

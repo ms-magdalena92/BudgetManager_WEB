@@ -156,7 +156,7 @@ if(isset($_SESSION['loggedUserId'])) {
 						</li>
 						
 						<li class="col-lg-2 nav-item">
-							<a class="nav-link" href="index.php"><i class="icon-logout"></i> Sign out</a>
+							<a class="nav-link" href="logout.php"><i class="icon-logout"></i> Sign out</a>
 						</li>
 						
 					</ul>

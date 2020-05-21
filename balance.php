@@ -1,16 +1,21 @@
 <?php
 session_start();
 
+$startDate = 00-00-00;
+$endDate = 00-00-00;
+
 if(isset($_SESSION['loggedUserId'])) {
 	
 	require_once 'database.php';
 	
-	if(isset($_GET['startDate'])) {
+	if(isset($_GET['userStartDate'])) {
 		
-		if($_GET['startDate'] > $_GET['endDate']) {
-			$_SESSION['wrongDateOrder'] = "Incorrect date order. Please enter again.";
-			header('Location: '.$_SERVER['HTTP_REFERER']);
-			exit();
+		if($_GET['userStartDate'] > $_GET['userEndDate']) {
+			$startDate = $_GET['userEndDate'];
+			$endDate = $_GET['userStartDate'];
+		} else {
+			$startDate = $_GET['userStartDate'];
+			$endDate = $_GET['userEndDate'];
 		}
 		
 		$balanceQuery = $db -> prepare(
@@ -19,7 +24,7 @@ if(isset($_SESSION['loggedUserId'])) {
 		WHERE e.user_id=:loggedUserId AND e.expense_date BETWEEN :startDate AND :endDate
 		GROUP BY e.category_id
 		ORDER BY SUM(e.expense_amount) DESC");
-		$balanceQuery -> execute([':loggedUserId'=> $_SESSION['loggedUserId'], ':startDate'=> $_GET['startDate'], ':endDate'=> $_GET['endDate']]);
+		$balanceQuery -> execute([':loggedUserId'=> $_SESSION['loggedUserId'], ':startDate'=> $startDate, ':endDate'=> $endDate]);
 		
 		$expensesOfLoggedUser = $balanceQuery -> fetchAll();
 	} else {
@@ -49,6 +54,7 @@ if(isset($_SESSION['loggedUserId'])) {
 	
 	<meta http-equiv="X-Ua-Compatible" content="IE=edge">
 	
+	<script src="https://code.jquery.com/jquery-3.4.1.slim.min.js" integrity="sha384-J6qa4849blE2+poT4WnyKhv5vZF5SrPo0iEjwBvKU7imGFAV0wwj1yYfoRSJoZ+n" crossorigin="anonymous"></script>
 	<link rel="stylesheet" href="css/bootstrap.min.css">
 	<link rel="stylesheet" href="css/main.css">
 	<link rel="stylesheet" href="css/fontello.css">
@@ -100,24 +106,24 @@ if(isset($_SESSION['loggedUserId'])) {
 							<div class="dropdown-menu bg-transparent border-0 m-0 p-0">
 							
 								<?php
-									$startDate = date('Y-m-01');
-									$endDate = date('Y-m-t');
-							
-									echo '<a class="dropdown-item" href="balance.php?startDate='.$startDate.'&endDate='.$endDate.'">Current Month</a>';
+								$userStartDate = date('Y-m-01');
+								$userEndDate = date('Y-m-t');
+								
+								echo '<a class="dropdown-item" href="balance.php?userStartDate='.$userStartDate.'&userEndDate='.$userEndDate.'">Current Month</a>';
 								?>
 								<?php
-									$startDate = date('Y-m-01', strtotime("last month"));
-									$endDate = date('Y-m-t', strtotime("last month"));
-							
-									echo '<a class="dropdown-item" href="balance.php?startDate='.$startDate.'&endDate='.$endDate.'">Last Month</a>';
+									$userStartDate = date('Y-m-01', strtotime("last month"));
+									$userEndDate = date('Y-m-t', strtotime("last month"));
+									
+									echo '<a class="dropdown-item" href="balance.php?userStartDate='.$userStartDate.'&userEndDate='.$userEndDate.'">Last Month</a>';
 								?>
 								<?php
-									$startDate = date('Y-01-01');
-									$endDate = date('Y-12-31');
-							
-									echo '<a class="dropdown-item" href="balance.php?startDate='.$startDate.'&endDate='.$endDate.'">Current Year</a>';
+									$userStartDate = date('Y-01-01');
+									$userEndDate = date('Y-12-31');
+									
+									echo '<a class="dropdown-item" href="balance.php?userStartDate='.$userStartDate.'&userEndDate='.$userEndDate.'">Current Year</a>';
 								?>
-								<a class="dropdown-item" href="balance.php" data-toggle="modal" data-target="#dateModal">Custom</a>
+								<a class="dropdown-item" href="#" data-toggle="modal" data-target="#dateModal">Custom</a>
 							
 							</div>
 						</li>
@@ -158,7 +164,7 @@ if(isset($_SESSION['loggedUserId'])) {
 				<div class="col-12 timePeriod pt-3 pb-2">
 					
 					<?php
-						echo "<h5>TIME PERIOD:&emsp;".$_GET['startDate']."  -  ".$_GET['endDate']."</h5>";
+						echo "<h5>TIME PERIOD:&emsp;".$startDate."  -  ".$endDate."</h5>";
 					?>
 					
 					<div class="btn-group m-2 mr-4 dateButton">
@@ -169,22 +175,22 @@ if(isset($_SESSION['loggedUserId'])) {
 						<div class="dropdown-menu bg-transparent border-0 m-0 p-0 dropdown-menu-right">
 						
 							<?php
-								$startDate = date('Y-m-01');
-								$endDate = date('Y-m-t');
-							
-								echo '<a class="dropdown-item" href="balance.php?startDate='.$startDate.'&endDate='.$endDate.'">Current Month</a>';
+								$userStartDate = date('Y-m-01');
+								$userEndDate = date('Y-m-t');
+								
+								echo '<a class="dropdown-item" href="balance.php?userStartDate='.$userStartDate.'&userEndDate='.$userEndDate.'">Current Month</a>';
 							?>
 							<?php
-								$startDate = date('Y-m-01', strtotime("last month"));
-								$endDate = date('Y-m-t', strtotime("last month"));
-							
-								echo '<a class="dropdown-item " href="balance.php?startDate='.$startDate.'&endDate='.$endDate.'">Last Month</a>';
+								$userStartDate = date('Y-m-01', strtotime("last month"));
+								$userEndDate = date('Y-m-t', strtotime("last month"));
+								
+								echo '<a class="dropdown-item" href="balance.php?userStartDate='.$userStartDate.'&userEndDate='.$userEndDate.'">Last Month</a>';
 							?>
 							<?php
-								$startDate = date('Y-01-01');
-								$endDate = date('Y-12-31');
-							
-								echo '<a class="dropdown-item" href="balance.php?startDate='.$startDate.'&endDate='.$endDate.'">Current Year</a>';
+								$userStartDate = date('Y-01-01');
+								$userEndDate = date('Y-12-31');
+								
+								echo '<a class="dropdown-item" href="balance.php?userStartDate='.$userStartDate.'&userEndDate='.$userEndDate.'">Current Year</a>';
 							?>
 							<a class="dropdown-item" data-toggle="modal" data-target="#dateModal">Custom</a>
 						</div>
@@ -223,7 +229,7 @@ if(isset($_SESSION['loggedUserId'])) {
 									FROM expenses e NATURAL JOIN payment_methods pm
 									WHERE e.category_id=:expenseCategoryId AND e.user_id=:loggedUserId AND e.expense_date BETWEEN :startDate AND :endDate
 									ORDER BY e.expense_date ASC");
-									$tableRowsQuery -> execute([':loggedUserId' => $_SESSION['loggedUserId'], ':expenseCategoryId' => $expenses['category_id'], ':startDate'=> $_GET['startDate'], ':endDate'=> $_GET['endDate']]);
+									$tableRowsQuery -> execute([':loggedUserId' => $_SESSION['loggedUserId'], ':expenseCategoryId' => $expenses['category_id'], ':startDate'=> $startDate, ':endDate'=> $endDate]);
 									
 									$expensesOfSpecificCategory = $tableRowsQuery -> fetchAll();
 									
@@ -254,8 +260,8 @@ if(isset($_SESSION['loggedUserId'])) {
 			</div>
 			
 		</section>
-
-		<div class="modal hide fade in" data-backdrop="static" id="dateModal">
+		
+		<div class="modal fade" role='dialog' id="dateModal">
 			<div class="modal-dialog" role="document">
 				<div class="modal-content">
 
@@ -274,12 +280,12 @@ if(isset($_SESSION['loggedUserId'])) {
 								
 								<div class="form-group my-2">
 									<label for="startDate">Enter start date</label>
-									<input class="form-control  userInput labeledInput" type="date" name="startDate" required>
+									<input class="form-control  userInput labeledInput" type="date" name="userStartDate" required>
 								</div>
 									
 								<div class="form-group my-2">
 									<label for="endDate">Enter end date</label>
-									<input class="form-control userInput labeledInput" type="date" name="endDate" required>
+									<input class="form-control userInput labeledInput" type="date" name="userEndDate" required>
 								</div>
 									
 							</div>
@@ -308,7 +314,6 @@ if(isset($_SESSION['loggedUserId'])) {
 	</footer>
 	
 	<script src="js/budget.js"></script>
-	<script src="https://code.jquery.com/jquery-3.4.1.slim.min.js" integrity="sha384-J6qa4849blE2+poT4WnyKhv5vZF5SrPo0iEjwBvKU7imGFAV0wwj1yYfoRSJoZ+n" crossorigin="anonymous"></script>
 	<script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js" integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo" crossorigin="anonymous"></script>
 	<script src="js/bootstrap.min.js"></script>
 	<script src="js/jquery-3.4.1.min.js"></script>

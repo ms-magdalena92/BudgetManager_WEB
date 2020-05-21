@@ -95,22 +95,22 @@ if(!isset($_SESSION['loggedUserId'])) {
 							<div class="dropdown-menu bg-transparent border-0 m-0 p-0">
 							
 								<?php
-									$startDate = date('Y-m-01');
-									$endDate = date('Y-m-t');
-							
-									echo '<a class="dropdown-item" href="balance.php?startDate='.$startDate.'&endDate='.$endDate.'">Current Month</a>';
+									$userStartDate = date('Y-m-01');
+									$userEndDate = date('Y-m-t');
+								
+									echo '<a class="dropdown-item" href="balance.php?userStartDate='.$userStartDate.'&userEndDate='.$userEndDate.'">Current Month</a>';
 								?>
 								<?php
-									$startDate = date('Y-m-01', strtotime("last month"));
-									$endDate = date('Y-m-t', strtotime("last month"));
-							
-									echo '<a class="dropdown-item" href="balance.php?startDate='.$startDate.'&endDate='.$endDate.'">Last Month</a>';
+									$userStartDate = date('Y-m-01', strtotime("last month"));
+									$userEndDate = date('Y-m-t', strtotime("last month"));
+								
+									echo '<a class="dropdown-item" href="balance.php?userStartDate='.$userStartDate.'&userEndDate='.$userEndDate.'">Last Month</a>';
 								?>
 								<?php
-									$startDate = date('Y-01-01');
-									$endDate = date('Y-12-31');
-							
-									echo '<a class="dropdown-item" href="balance.php?startDate='.$startDate.'&endDate='.$endDate.'">Current Year</a>';
+									$userStartDate = date('Y-01-01');
+									$userEndDate = date('Y-12-31');
+								
+									echo '<a class="dropdown-item" href="balance.php?userStartDate='.$userStartDate.'&userEndDate='.$userEndDate.'">Current Year</a>';
 								?>
 								<a class="dropdown-item" href="#" data-toggle="modal" data-target="#dateModal">Custom</a>
 							
@@ -152,12 +152,6 @@ if(!isset($_SESSION['loggedUserId'])) {
 		
 		</section>
 		
-		<?php
-		if(isset($_SESSION['wrongDateOrder'])) {
-			echo "<script>$(document).ready(function(){ $('#dateModal').modal('show'); });</script>";
-		}
-		?>
-		
 		<div class="modal fade" role='dialog' id="dateModal">
 			<div class="modal-dialog" role="document">
 				<div class="modal-content">
@@ -177,22 +171,15 @@ if(!isset($_SESSION['loggedUserId'])) {
 								
 								<div class="form-group my-2">
 									<label for="startDate">Enter start date</label>
-									<input class="form-control  userInput labeledInput" type="date" name="startDate" required>
+									<input class="form-control  userInput labeledInput" type="date" name="userStartDate" required>
 								</div>
 									
 								<div class="form-group my-2">
 									<label for="endDate">Enter end date</label>
-									<input class="form-control userInput labeledInput" type="date" name="endDate" required>
+									<input class="form-control userInput labeledInput" type="date" name="userEndDate" required>
 								</div>
 									
 							</div>
-							
-							<?php
-								if(isset($_SESSION['wrongDateOrder'])) {
-									echo '<div class="text-danger">'.$_SESSION['wrongDateOrder'].'</div>';
-									unset($_SESSION['wrongDateOrder']);
-								}
-							?>
 								
 						</div>
 
@@ -218,7 +205,6 @@ if(!isset($_SESSION['loggedUserId'])) {
 	</footer>
 	
 	<script src="js/budget.js"></script>
-	<script src="https://code.jquery.com/jquery-3.4.1.slim.min.js" integrity="sha384-J6qa4849blE2+poT4WnyKhv5vZF5SrPo0iEjwBvKU7imGFAV0wwj1yYfoRSJoZ+n" crossorigin="anonymous"></script>
 	<script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js" integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo" crossorigin="anonymous"></script>
 	<script src="js/bootstrap.min.js"></script>
 	

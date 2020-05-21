@@ -169,12 +169,12 @@ if(isset($_SESSION['loggedUserId'])) {
 		
 		<section class="container-fluid square mb-4 py-3">
 			
-			<div class="row justify-content-md-center py-3">
+			<div class="row py-3">
 			
 				<div class="col-12 timePeriod pt-3 pb-2">
 					
 					<?php
-						echo "<h5>TIME PERIOD:&emsp;".$startDate."  -  ".$endDate."</h5>";
+						echo "<h5>TIME PERIOD:&emsp;<span class='text-nowrap'>".$startDate."</span>  -  <span class='text-nowrap'>".$endDate."</span></h5>";
 					?>
 					
 					<div class="btn-group m-2 mr-4 dateButton">
@@ -295,10 +295,22 @@ if(isset($_SESSION['loggedUserId'])) {
 			</div>
 			
 			<div class="row col-sm-6 col-lg-4 justify-content-center mt-5 mb-2 mx-auto box">
-				<div id="balance">BALANCE: </div><div class="ml-3" id="result"></div>
+				
+				<?php
+					$balance = $totalIncomes - $totalExpenses;
+					echo '<div id="balance">BALANCE:&emsp;'.$balance.'</div>';
+				?>
+				
 			</div>
 			
-			<h3 id="resultText"></h3>
+
+			<?php
+				if($totalIncomes - $totalExpenses >= 0) {
+					echo '<div class="ml-3 text-success" id="result">Great!  You Manage Your Finances Very Well!</div>';
+				} else {
+					echo '<div class="ml-3 text-danger" id="result">Watch Out! You Are Getting Into Debt!!</div>';
+				}
+			?>
 			
 			<div class="col-sm-8 col-lg-6 mt-4 mb-2 pt-2 pb-4 mx-auto box">
 				<div id="piechart1"></div>

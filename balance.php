@@ -1,3 +1,55 @@
+<?php
+session_start();
+
+$startDate = 00-00-00;
+$endDate = 00-00-00;
+
+if(isset($_SESSION['loggedUserId'])) {
+	
+	require_once 'database.php';
+	
+	if(isset($_GET['userStartDate'])) {
+		
+		if($_GET['userStartDate'] > $_GET['userEndDate']) {
+			$startDate = $_GET['userEndDate'];
+			$endDate = $_GET['userStartDate'];
+		} else {
+			$startDate = $_GET['userStartDate'];
+			$endDate = $_GET['userEndDate'];
+		}
+		
+		$expensesQuery = $db -> prepare(
+		"SELECT e.category_id, ec.expense_category, SUM(e.expense_amount)
+		FROM expenses e NATURAL JOIN expense_categories ec
+		WHERE e.user_id=:loggedUserId AND e.expense_date BETWEEN :startDate AND :endDate
+		GROUP BY e.category_id
+		ORDER BY SUM(e.expense_amount) DESC");
+		$expensesQuery -> execute([':loggedUserId'=> $_SESSION['loggedUserId'], ':startDate'=> $startDate, ':endDate'=> $endDate]);
+		
+		$expensesOfLoggedUser = $expensesQuery -> fetchAll();
+		
+		$incomesQuery = $db -> prepare(
+		"SELECT i.category_id, ic.income_category, SUM(i.income_amount)
+		FROM incomes i NATURAL JOIN income_categories ic
+		WHERE i.user_id=:loggedUserId AND i.income_date BETWEEN :startDate AND :endDate
+		GROUP BY i.category_id
+		ORDER BY SUM(i.income_amount) DESC");
+		$incomesQuery -> execute([':loggedUserId'=> $_SESSION['loggedUserId'], ':startDate'=> $startDate, ':endDate'=> $endDate]);
+		
+		$incomesOfLoggedUser = $incomesQuery -> fetchAll();
+	} else {
+		
+		header ("Location: menu.php");
+		exit();
+	}
+} else {
+
+	header ("Location: index.php");
+	exit();
+}
+	
+?>
+
 <!DOCTYPE html>
 
 <html lang="pl">
@@ -12,6 +64,7 @@
 	
 	<meta http-equiv="X-Ua-Compatible" content="IE=edge">
 	
+	<script src="https://code.jquery.com/jquery-3.4.1.slim.min.js" integrity="sha384-J6qa4849blE2+poT4WnyKhv5vZF5SrPo0iEjwBvKU7imGFAV0wwj1yYfoRSJoZ+n" crossorigin="anonymous"></script>
 	<link rel="stylesheet" href="css/bootstrap.min.css">
 	<link rel="stylesheet" href="css/main.css">
 	<link rel="stylesheet" href="css/fontello.css">
@@ -19,11 +72,15 @@
 
 </head>
 
-<body onload="pageLoad(); getCurrentDate()" onresize="pageResize()">
+<!-- <body onload="pageLoad(); getCurrentDate()" onresize="pageResize()"> -->
+<body>
 	
 	<header>
 	
-		<h1 class="mt-3 mb-1" id="title"><a id="homeButton" href="index.php" role="button">Welcome to <span id="logo">MyBudget</span>.com!</a></h1>
+		<h1 class="mt-3 mb-1" id="title">
+			<a id="homeButton" href="index.php" role="button">Welcome to <span id="logo">MyBudget</span>.com!</a>
+		</h1>
+		
 		<p id="subtitle">Your Personal Finance Manager</p>
 		
 	</header>
@@ -42,7 +99,7 @@
 			
 					<ul class="navbar-nav mx-auto">
 					
-						<li class="col-lg-2 nav-item disabled">
+						<li class="col-lg-2 nav-item">
 							<a class="nav-link" href="menu.php"><i class="icon-home"></i> Home</a>
 						</li>
 						
@@ -54,14 +111,29 @@
 							<a class="nav-link" href="expense.php"><i class="icon-dollar"></i> Add Expense</a>
 						</li>
 						
-						<li class="col-lg-2 nav-item dropdown">
+						<li class="col-lg-2 nav-item dropdown disabled">
 							<a class="nav-link" href="#" role="button"><i class="icon-chart-pie"></i> View Balance</a>
 							<div class="dropdown-menu bg-transparent border-0 m-0 p-0">
 							
-								<a class="dropdown-item" href="balance.php">Current Month</a>
-								<a class="dropdown-item" href="balance.php">Last Month</a>
-								<a class="dropdown-item" href="balance.php">Current Year</a>
-								<a class="dropdown-item" href="balance.php" data-toggle="modal" data-target="#dateModal">Custom</a>
+								<?php
+								$userStartDate = date('Y-m-01');
+								$userEndDate = date('Y-m-t');
+								
+								echo '<a class="dropdown-item" href="balance.php?userStartDate='.$userStartDate.'&userEndDate='.$userEndDate.'">Current Month</a>';
+								?>
+								<?php
+									$userStartDate = date('Y-m-01', strtotime("last month"));
+									$userEndDate = date('Y-m-t', strtotime("last month"));
+									
+									echo '<a class="dropdown-item" href="balance.php?userStartDate='.$userStartDate.'&userEndDate='.$userEndDate.'">Last Month</a>';
+								?>
+								<?php
+									$userStartDate = date('Y-01-01');
+									$userEndDate = date('Y-12-31');
+									
+									echo '<a class="dropdown-item" href="balance.php?userStartDate='.$userStartDate.'&userEndDate='.$userEndDate.'">Current Year</a>';
+								?>
+								<a class="dropdown-item" href="#" data-toggle="modal" data-target="#dateModal">Custom</a>
 							
 							</div>
 						</li>
@@ -84,7 +156,7 @@
 						</li>
 						
 						<li class="col-lg-2 nav-item">
-							<a class="nav-link" href="index.php"><i class="icon-logout"></i> Sign out</a>
+							<a class="nav-link" href="logout.php"><i class="icon-logout"></i> Sign out</a>
 						</li>
 						
 					</ul>
@@ -97,11 +169,13 @@
 		
 		<section class="container-fluid square mb-4 py-3">
 			
-			<div class="row justify-content-md-center py-3">
+			<div class="row py-3">
 			
-				<div class="col-12 timePeriod py-3">
-				
-					<h2>CURRENT MONTH</h2>
+				<div class="col-12 timePeriod pt-3 pb-2">
+					
+					<?php
+						echo "<h5>TIME PERIOD:&emsp;<span class='text-nowrap'>".$startDate."</span>  -  <span class='text-nowrap'>".$endDate."</span></h5>";
+					?>
 					
 					<div class="btn-group m-2 mr-4 dateButton">
 						<button type="button" class="btn"><i class="icon-calendar"></i> Choose Date</button>
@@ -109,10 +183,26 @@
 						<span class="sr-only">Expand the list</span>
 						</button>
 						<div class="dropdown-menu bg-transparent border-0 m-0 p-0 dropdown-menu-right">
-							<a class="dropdown-item" href="balance.php">Current Month</a>
-							<a class="dropdown-item" href="balance.php">Last Month</a>
-							<a class="dropdown-item" href="balance.php">Current Year</a>
-							<a class="dropdown-item" href="balance.php" data-toggle="modal" data-target="#dateModal">Custom</a>
+						
+							<?php
+								$userStartDate = date('Y-m-01');
+								$userEndDate = date('Y-m-t');
+								
+								echo '<a class="dropdown-item" href="balance.php?userStartDate='.$userStartDate.'&userEndDate='.$userEndDate.'">Current Month</a>';
+							?>
+							<?php
+								$userStartDate = date('Y-m-01', strtotime("last month"));
+								$userEndDate = date('Y-m-t', strtotime("last month"));
+								
+								echo '<a class="dropdown-item" href="balance.php?userStartDate='.$userStartDate.'&userEndDate='.$userEndDate.'">Last Month</a>';
+							?>
+							<?php
+								$userStartDate = date('Y-01-01');
+								$userEndDate = date('Y-12-31');
+								
+								echo '<a class="dropdown-item" href="balance.php?userStartDate='.$userStartDate.'&userEndDate='.$userEndDate.'">Current Year</a>';
+							?>
+							<a class="dropdown-item" data-toggle="modal" data-target="#dateModal">Custom</a>
 						</div>
 					</div>
 					
@@ -121,15 +211,106 @@
 			</div>
 			
 			<div class="row justify-content-center" id="tables">
-				<div class="table-responsive col-md-6" id="tableIncomes"></div>
-				<div class="table-responsive col-md-6" id="tableExpenses"></div>
+				<div class="table-responsive col-md-6" id="tableIncomes">
+					<table class="table-sm col-lg-10 mx-auto my-2">
+						<tbody>
+							<thead class="thead-dark">
+								<caption>Incomes</caption>
+								<tr>
+									<th class="category">Category</th>
+									<th class="amount">Amount</th>
+									<th></th>
+								</tr>
+							</thead>
+							
+							<?php
+								$totalIncomes = 0;
+								
+								foreach ($incomesOfLoggedUser as $incomes) {
+									echo "<tr class=\"summary\"><td class=\"category\">{$incomes['income_category']}</td><td class=\"sum\">{$incomes['SUM(i.income_amount)']} PLN</td></tr>";
+									
+									$totalIncomes += $incomes['SUM(i.income_amount)'];
+									
+									$incomesTableRowsQuery = $db -> prepare(
+									"SELECT income_date, income_amount, income_comment
+									FROM incomes
+									WHERE category_id=:incomeCategoryId AND user_id=:loggedUserId AND income_date BETWEEN :startDate AND :endDate
+									ORDER BY income_date ASC");
+									$incomesTableRowsQuery -> execute([':loggedUserId' => $_SESSION['loggedUserId'], ':incomeCategoryId' => $incomes['category_id'], ':startDate'=> $startDate, ':endDate'=> $endDate]);
+									
+									$incomesOfSpecificCategory = $incomesTableRowsQuery -> fetchAll();
+									
+									foreach ($incomesOfSpecificCategory as $categoryIncome) {
+										echo "<tr><td class=\"date\">{$categoryIncome['income_date']}</td><td class=\"amount\">{$categoryIncome['income_amount']} PLN</td><td class=\"comment\">{$categoryIncome['income_comment']}</td></tr>";
+									}
+								}
+								
+								echo "<tr class=\"summary\"><td class=\"total\">TOTAL</td><td class=\"sum\">{$totalIncomes} PLN</td></tr>";
+							?>
+						</tbody>
+					</table>
+				</div>
+				
+				<div class="table-responsive col-md-6" id="tableExpenses">
+				
+					<table class="table-sm col-lg-10 mx-auto my-2">
+						<tbody>
+							<thead class="thead-dark">
+								<caption>Expenses</caption>
+								<tr>
+									<th class="category">Category</th>
+									<th class="amount">Amount</th>
+									<th></th>
+									<th></th>
+								</tr>
+							</thead>
+							
+							<?php
+								$totalExpenses = 0;
+								
+								foreach ($expensesOfLoggedUser as $expenses) {
+									echo "<tr class=\"summary\"><td class=\"category\">{$expenses['expense_category']}</td><td class=\"sum\">{$expenses['SUM(e.expense_amount)']} PLN</td></tr>";
+									
+									$totalExpenses += $expenses['SUM(e.expense_amount)'];
+									
+									$expensesTableRowsQuery = $db -> prepare(
+									"SELECT e.expense_date, e.expense_amount, pm.payment_method, e.expense_comment
+									FROM expenses e NATURAL JOIN payment_methods pm
+									WHERE e.category_id=:expenseCategoryId AND e.user_id=:loggedUserId AND e.expense_date BETWEEN :startDate AND :endDate
+									ORDER BY e.expense_date ASC");
+									$expensesTableRowsQuery -> execute([':loggedUserId' => $_SESSION['loggedUserId'], ':expenseCategoryId' => $expenses['category_id'], ':startDate'=> $startDate, ':endDate'=> $endDate]);
+									
+									$expensesOfSpecificCategory = $expensesTableRowsQuery -> fetchAll();
+									
+									foreach ($expensesOfSpecificCategory as $categoryExpense) {
+										echo "<tr><td class=\"date\">{$categoryExpense['expense_date']}</td><td class=\"amount\">{$categoryExpense['expense_amount']} PLN</td><td class=\"payment\">{$categoryExpense['payment_method']}</td><td class=\"comment\">{$categoryExpense['expense_comment']}</td></tr>";
+									}
+								}
+								
+								echo "<tr class=\"summary\"><td class=\"total\">TOTAL</td><td class=\"sum\">{$totalExpenses} PLN</td></tr>";
+							?>
+						</tbody>
+					</table>
+				</div>
 			</div>
 			
 			<div class="row col-sm-6 col-lg-4 justify-content-center mt-5 mb-2 mx-auto box">
-				<div id="balance">BALANCE: </div><div class="ml-3" id="result"></div>
+				
+				<?php
+					$balance = $totalIncomes - $totalExpenses;
+					echo '<div id="balance">BALANCE:&emsp;'.$balance.'</div>';
+				?>
+				
 			</div>
 			
-			<h3 id="resultText"></h3>
+
+			<?php
+				if($totalIncomes - $totalExpenses >= 0) {
+					echo '<div class="ml-3 text-success" id="result">Great!  You Manage Your Finances Very Well!</div>';
+				} else {
+					echo '<div class="ml-3 text-danger" id="result">Watch Out! You Are Getting Into Debt!!</div>';
+				}
+			?>
 			
 			<div class="col-sm-8 col-lg-6 mt-4 mb-2 pt-2 pb-4 mx-auto box">
 				<div id="piechart1"></div>
@@ -140,8 +321,8 @@
 			</div>
 			
 		</section>
-
-		<div class="modal hide fade in" data-backdrop="static" id="dateModal">
+		
+		<div class="modal fade" role='dialog' id="dateModal">
 			<div class="modal-dialog" role="document">
 				<div class="modal-content">
 
@@ -150,34 +331,34 @@
 						<button type="button" class="close" data-dismiss="modal">&times;</button>
 					</div>
 
-					<div class="modal-body">
+					<form class="col py-3 mx-auto" action="balance.php" method="get">
 					
-						<form class="col py-3 mx-auto">
-				
-							<h5>Enter a start date and an end date of period that you want to review</h5>
-							
-							<div class="row justify-content-around py-2">
-							
-								<div class="form-group my-2">
-									<label for="dateInput1">Enter start date</label>
-									<input class="form-control  userInput labeledInput" type="date" id="dateInput1" required>
-								</div>
-								
-								<div class="form-group my-2">
-									<label for="dateInput2">Enter end date</label>
-									<input class="form-control  userInput labeledInput" type="date" id="dateInput2" required>
-								</div>
-								
-							</div>
-							
-						</form>
+						<div class="modal-body">
 						
-					</div>
+							<h5>Enter a start date and an end date of period that you want to review</h5>
+								
+							<div class="row justify-content-around py-2">
+								
+								<div class="form-group my-2">
+									<label for="startDate">Enter start date</label>
+									<input class="form-control  userInput labeledInput" type="date" name="userStartDate" required>
+								</div>
+									
+								<div class="form-group my-2">
+									<label for="endDate">Enter end date</label>
+									<input class="form-control userInput labeledInput" type="date" name="userEndDate" required>
+								</div>
+									
+							</div>
+								
+						</div>
 
-					<div class="modal-footer">
-						<button type="button" class="btn btn-primary" >Save</button>
-						<button type="button" class="btn btn-danger" data-dismiss="modal">Close</button>
-					</div>
+						<div class="modal-footer">
+							<button class="btn btn-primary" type="submit">Save</button>
+							<button type="button" class="btn btn-danger" data-dismiss="modal">Close</button>
+						</div>
+							
+					</form>
 
 				</div>
 			</div>
@@ -194,7 +375,6 @@
 	</footer>
 	
 	<script src="js/budget.js"></script>
-	<script src="https://code.jquery.com/jquery-3.4.1.slim.min.js" integrity="sha384-J6qa4849blE2+poT4WnyKhv5vZF5SrPo0iEjwBvKU7imGFAV0wwj1yYfoRSJoZ+n" crossorigin="anonymous"></script>
 	<script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js" integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo" crossorigin="anonymous"></script>
 	<script src="js/bootstrap.min.js"></script>
 	<script src="js/jquery-3.4.1.min.js"></script>

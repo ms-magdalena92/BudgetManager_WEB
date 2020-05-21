@@ -26,17 +26,6 @@ if(!isset($_SESSION['loggedUserId'])) {
 			header ('Location: login.php');
 			exit();
 		}
-	
-	} else {
-		header ('Location: balance.php?startDate='.$startDate.'&endDate='.$endDate);
-		exit();
-	}
-	
-	if(isset($_POST['startDate'])) {
-		$startDate = $_POST['startDate'];
-		$endDate = $_POST['endDate'];
-		header ('Location: login.php');
-		exit();
 	}
 }
 ?>
@@ -55,6 +44,7 @@ if(!isset($_SESSION['loggedUserId'])) {
 	
 	<meta http-equiv="X-Ua-Compatible" content="IE=edge">
 	
+	<script src="https://code.jquery.com/jquery-3.4.1.slim.min.js" integrity="sha384-J6qa4849blE2+poT4WnyKhv5vZF5SrPo0iEjwBvKU7imGFAV0wwj1yYfoRSJoZ+n" crossorigin="anonymous"></script>
 	<link rel="stylesheet" href="css/bootstrap.min.css">
 	<link rel="stylesheet" href="css/main.css">
 	<link rel="stylesheet" href="css/fontello.css">
@@ -162,7 +152,13 @@ if(!isset($_SESSION['loggedUserId'])) {
 		
 		</section>
 		
-		<div class="modal hide fade in" data-backdrop="static" id="dateModal">
+		<?php
+		if(isset($_SESSION['wrongDateOrder'])) {
+			echo "<script>$(document).ready(function(){ $('#dateModal').modal('show'); });</script>";
+		}
+		?>
+		
+		<div class="modal fade" role='dialog' id="dateModal">
 			<div class="modal-dialog" role="document">
 				<div class="modal-content">
 
@@ -190,6 +186,13 @@ if(!isset($_SESSION['loggedUserId'])) {
 								</div>
 									
 							</div>
+							
+							<?php
+								if(isset($_SESSION['wrongDateOrder'])) {
+									echo '<div class="text-danger">'.$_SESSION['wrongDateOrder'].'</div>';
+									unset($_SESSION['wrongDateOrder']);
+								}
+							?>
 								
 						</div>
 

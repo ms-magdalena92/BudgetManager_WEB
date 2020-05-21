@@ -6,6 +6,13 @@ if(isset($_SESSION['loggedUserId'])) {
 	require_once 'database.php';
 	
 	if(isset($_GET['startDate'])) {
+		
+		if($_GET['startDate'] > $_GET['endDate']) {
+			$_SESSION['wrongDateOrder'] = "Incorrect date order. Please enter again.";
+			header('Location: '.$_SERVER['HTTP_REFERER']);
+			exit();
+		}
+		
 		$balanceQuery = $db -> prepare(
 		"SELECT e.category_id, ec.expense_category, SUM(e.expense_amount)
 		FROM expenses e NATURAL JOIN expense_categories ec

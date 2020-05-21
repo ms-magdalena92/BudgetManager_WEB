@@ -18,15 +18,25 @@ if(isset($_SESSION['loggedUserId'])) {
 			$endDate = $_GET['userEndDate'];
 		}
 		
-		$balanceQuery = $db -> prepare(
+		$expensesQuery = $db -> prepare(
 		"SELECT e.category_id, ec.expense_category, SUM(e.expense_amount)
 		FROM expenses e NATURAL JOIN expense_categories ec
 		WHERE e.user_id=:loggedUserId AND e.expense_date BETWEEN :startDate AND :endDate
 		GROUP BY e.category_id
 		ORDER BY SUM(e.expense_amount) DESC");
-		$balanceQuery -> execute([':loggedUserId'=> $_SESSION['loggedUserId'], ':startDate'=> $startDate, ':endDate'=> $endDate]);
+		$expensesQuery -> execute([':loggedUserId'=> $_SESSION['loggedUserId'], ':startDate'=> $startDate, ':endDate'=> $endDate]);
 		
-		$expensesOfLoggedUser = $balanceQuery -> fetchAll();
+		$expensesOfLoggedUser = $expensesQuery -> fetchAll();
+		
+		$incomesQuery = $db -> prepare(
+		"SELECT i.category_id, ic.income_category, SUM(i.income_amount)
+		FROM incomes i NATURAL JOIN income_categories ic
+		WHERE i.user_id=:loggedUserId AND i.income_date BETWEEN :startDate AND :endDate
+		GROUP BY i.category_id
+		ORDER BY SUM(i.income_amount) DESC");
+		$incomesQuery -> execute([':loggedUserId'=> $_SESSION['loggedUserId'], ':startDate'=> $startDate, ':endDate'=> $endDate]);
+		
+		$incomesOfLoggedUser = $incomesQuery -> fetchAll();
 	} else {
 		
 		header ("Location: menu.php");
@@ -201,7 +211,46 @@ if(isset($_SESSION['loggedUserId'])) {
 			</div>
 			
 			<div class="row justify-content-center" id="tables">
-				<div class="table-responsive col-md-6" id="tableIncomes"></div>
+				<div class="table-responsive col-md-6" id="tableIncomes">
+					<table class="table-sm col-lg-10 mx-auto my-2">
+						<tbody>
+							<thead class="thead-dark">
+								<caption>Incomes</caption>
+								<tr>
+									<th class="category">Category</th>
+									<th class="amount">Amount</th>
+									<th></th>
+								</tr>
+							</thead>
+							
+							<?php
+								$totalIncomes = 0;
+								
+								foreach ($incomesOfLoggedUser as $incomes) {
+									echo "<tr class=\"summary\"><td class=\"category\">{$incomes['income_category']}</td><td class=\"sum\">{$incomes['SUM(i.income_amount)']} PLN</td></tr>";
+									
+									$totalIncomes += $incomes['SUM(i.income_amount)'];
+									
+									$incomesTableRowsQuery = $db -> prepare(
+									"SELECT income_date, income_amount, income_comment
+									FROM incomes
+									WHERE category_id=:incomeCategoryId AND user_id=:loggedUserId AND income_date BETWEEN :startDate AND :endDate
+									ORDER BY income_date ASC");
+									$incomesTableRowsQuery -> execute([':loggedUserId' => $_SESSION['loggedUserId'], ':incomeCategoryId' => $incomes['category_id'], ':startDate'=> $startDate, ':endDate'=> $endDate]);
+									
+									$incomesOfSpecificCategory = $incomesTableRowsQuery -> fetchAll();
+									
+									foreach ($incomesOfSpecificCategory as $categoryIncome) {
+										echo "<tr><td class=\"date\">{$categoryIncome['income_date']}</td><td class=\"amount\">{$categoryIncome['income_amount']} PLN</td><td class=\"comment\">{$categoryIncome['income_comment']}</td></tr>";
+									}
+								}
+								
+								echo "<tr class=\"summary\"><td class=\"total\">TOTAL</td><td class=\"sum\">{$totalIncomes} PLN</td></tr>";
+							?>
+						</tbody>
+					</table>
+				</div>
+				
 				<div class="table-responsive col-md-6" id="tableExpenses">
 				
 					<table class="table-sm col-lg-10 mx-auto my-2">
@@ -224,14 +273,14 @@ if(isset($_SESSION['loggedUserId'])) {
 									
 									$totalExpenses += $expenses['SUM(e.expense_amount)'];
 									
-									$tableRowsQuery = $db -> prepare(
+									$expensesTableRowsQuery = $db -> prepare(
 									"SELECT e.expense_date, e.expense_amount, pm.payment_method, e.expense_comment
 									FROM expenses e NATURAL JOIN payment_methods pm
 									WHERE e.category_id=:expenseCategoryId AND e.user_id=:loggedUserId AND e.expense_date BETWEEN :startDate AND :endDate
 									ORDER BY e.expense_date ASC");
-									$tableRowsQuery -> execute([':loggedUserId' => $_SESSION['loggedUserId'], ':expenseCategoryId' => $expenses['category_id'], ':startDate'=> $startDate, ':endDate'=> $endDate]);
+									$expensesTableRowsQuery -> execute([':loggedUserId' => $_SESSION['loggedUserId'], ':expenseCategoryId' => $expenses['category_id'], ':startDate'=> $startDate, ':endDate'=> $endDate]);
 									
-									$expensesOfSpecificCategory = $tableRowsQuery -> fetchAll();
+									$expensesOfSpecificCategory = $expensesTableRowsQuery -> fetchAll();
 									
 									foreach ($expensesOfSpecificCategory as $categoryExpense) {
 										echo "<tr><td class=\"date\">{$categoryExpense['expense_date']}</td><td class=\"amount\">{$categoryExpense['expense_amount']} PLN</td><td class=\"payment\">{$categoryExpense['payment_method']}</td><td class=\"comment\">{$categoryExpense['expense_comment']}</td></tr>";

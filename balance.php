@@ -37,6 +37,7 @@ if(isset($_SESSION['loggedUserId'])) {
 		$incomesQuery -> execute([':loggedUserId'=> $_SESSION['loggedUserId'], ':startDate'=> $startDate, ':endDate'=> $endDate]);
 		
 		$incomesOfLoggedUser = $incomesQuery -> fetchAll();
+		
 	} else {
 		
 		header ("Location: menu.php");
@@ -47,7 +48,6 @@ if(isset($_SESSION['loggedUserId'])) {
 	header ("Location: index.php");
 	exit();
 }
-	
 ?>
 
 <!DOCTYPE html>
@@ -64,16 +64,79 @@ if(isset($_SESSION['loggedUserId'])) {
 	
 	<meta http-equiv="X-Ua-Compatible" content="IE=edge">
 	
-	<script src="https://code.jquery.com/jquery-3.4.1.slim.min.js" integrity="sha384-J6qa4849blE2+poT4WnyKhv5vZF5SrPo0iEjwBvKU7imGFAV0wwj1yYfoRSJoZ+n" crossorigin="anonymous"></script>
 	<link rel="stylesheet" href="css/bootstrap.min.css">
 	<link rel="stylesheet" href="css/main.css">
 	<link rel="stylesheet" href="css/fontello.css">
 	<link href="https://fonts.googleapis.com/css2?family=Baloo+Paaji+2:wght@400;500;700&family=Fredoka+One&family=Roboto:wght@400;700;900&family=Varela+Round&display=swap" rel="stylesheet">
+	
+	<script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+	<script type="text/javascript">
+
+		function drawChart() {
+			google.charts.load('current', {'packages':['corechart']});
+		
+			<?php
+				if(!empty($incomesOfLoggedUser)) {
+					echo "google.charts.setOnLoadCallback(drawIncomesChart);";
+				}
+				
+				if(!empty($expensesOfLoggedUser)) {
+					echo "google.charts.setOnLoadCallback(drawExpensesChart);";
+				}
+			?>
+			
+			function drawIncomesChart() {
+
+				var incomesData = google.visualization.arrayToDataTable([
+					['Category', 'Amount'],
+					<?php
+						foreach ($incomesOfLoggedUser as $incomes) {
+						echo "['{$incomes['income_category']}', parseInt('{$incomes['SUM(i.income_amount)']}')],";
+						}
+					?>
+					]);
+
+				var incomesOptions = {
+					title: 'Source of Income',
+					colors: ['#00e64d', '#66ff99', '#b3ffcc'],
+					backgroundColor: { fill:'transparent' },
+					chartArea:{top:30,bottom:10,width:'100%',height:'100%'},
+					fontSize: 16
+				};
+
+				var incomesChart = new google.visualization.PieChart(document.getElementById('piechart1'));
+				incomesChart.draw(incomesData, incomesOptions);
+			}
+			
+			function drawExpensesChart() {
+
+				var expensesData = google.visualization.arrayToDataTable([
+					['Category', 'Amount'],
+					<?php
+						foreach ($expensesOfLoggedUser as $expenses) {
+						echo "['{$expenses['expense_category']}', parseInt('{$expenses['SUM(e.expense_amount)']}')],";
+						}
+					?>
+					]);
+
+				var expensesOptions = {
+					title: 'Spendings',
+					colors: ['#ff3333', '#ff6666', '#ffb3b3'],
+					backgroundColor: { fill:'transparent' },
+					chartArea:{top:30,bottom:10,width:'100%',height:'100%'},
+					fontSize: 16
+				};
+
+				var expensesChart = new google.visualization.PieChart(document.getElementById('piechart2'));
+				expensesChart.draw(expensesData, expensesOptions);
+			}
+		}
+	
+	</script>
 
 </head>
 
-<!-- <body onload="pageLoad(); getCurrentDate()" onresize="pageResize()"> -->
-<body>
+<body onload="drawChart()" onresize="drawChart()">
 	
 	<header>
 	
@@ -312,14 +375,15 @@ if(isset($_SESSION['loggedUserId'])) {
 				}
 			?>
 			
-			<div class="col-sm-8 col-lg-6 mt-4 mb-2 pt-2 pb-4 mx-auto box">
-				<div id="piechart1"></div>
-			</div>
-
-			<div class="col-sm-8 col-lg-6 my-3 pt-2 pb-4 mx-auto box">
-				<div id="piechart2"></div>
-			</div>
+			<?php
+				if(!empty($incomesOfLoggedUser)) {
+					echo '<div class="col-sm-8 col-lg-6 mt-4 mb-2 pt-2 pb-4 mx-auto box"><div id="piechart1"></div></div>';
+				}
 			
+				if(!empty($expensesOfLoggedUser)) {
+					echo '<div class="col-sm-8 col-lg-6 my-3 pt-2 pb-4 mx-auto box"><div id="piechart2"></div></div>';
+				}
+			?>
 		</section>
 		
 		<div class="modal fade" role='dialog' id="dateModal">
@@ -375,10 +439,10 @@ if(isset($_SESSION['loggedUserId'])) {
 	</footer>
 	
 	<script src="js/budget.js"></script>
+	<script src="https://code.jquery.com/jquery-3.4.1.slim.min.js" integrity="sha384-J6qa4849blE2+poT4WnyKhv5vZF5SrPo0iEjwBvKU7imGFAV0wwj1yYfoRSJoZ+n" crossorigin="anonymous"></script>
 	<script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js" integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo" crossorigin="anonymous"></script>
 	<script src="js/bootstrap.min.js"></script>
 	<script src="js/jquery-3.4.1.min.js"></script>
-	<script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
 	
 </body>
 

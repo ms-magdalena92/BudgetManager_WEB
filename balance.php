@@ -19,24 +19,29 @@ if(isset($_SESSION['loggedUserId'])) {
 		}
 		
 		$expensesQuery = $db -> prepare(
-		"SELECT e.category_id, ec.expense_category, SUM(e.expense_amount)
+		"SELECT e.category_id, ec.expense_category, SUM(e.expense_amount) AS expense_amount
 		FROM expenses e NATURAL JOIN expense_categories ec
 		WHERE e.user_id=:loggedUserId AND e.expense_date BETWEEN :startDate AND :endDate
 		GROUP BY e.category_id
-		ORDER BY SUM(e.expense_amount) DESC");
+		ORDER BY expense_amount DESC");
 		$expensesQuery -> execute([':loggedUserId'=> $_SESSION['loggedUserId'], ':startDate'=> $startDate, ':endDate'=> $endDate]);
 		
 		$expensesOfLoggedUser = $expensesQuery -> fetchAll();
 		
 		$incomesQuery = $db -> prepare(
-		"SELECT i.category_id, ic.income_category, SUM(i.income_amount)
+		"SELECT i.category_id, ic.income_category, SUM(i.income_amount) AS income_amount
 		FROM incomes i NATURAL JOIN income_categories ic
 		WHERE i.user_id=:loggedUserId AND i.income_date BETWEEN :startDate AND :endDate
 		GROUP BY i.category_id
-		ORDER BY SUM(i.income_amount) DESC");
+		ORDER BY income_amount DESC");
 		$incomesQuery -> execute([':loggedUserId'=> $_SESSION['loggedUserId'], ':startDate'=> $startDate, ':endDate'=> $endDate]);
 		
 		$incomesOfLoggedUser = $incomesQuery -> fetchAll();
+		
+		echo "<script>
+				var incomes = ".json_encode($incomesOfLoggedUser).";
+				var expenses = ".json_encode($expensesOfLoggedUser)."
+			</script>";
 		
 	} else {
 		
@@ -68,75 +73,10 @@ if(isset($_SESSION['loggedUserId'])) {
 	<link rel="stylesheet" href="css/main.css">
 	<link rel="stylesheet" href="css/fontello.css">
 	<link href="https://fonts.googleapis.com/css2?family=Baloo+Paaji+2:wght@400;500;700&family=Fredoka+One&family=Roboto:wght@400;700;900&family=Varela+Round&display=swap" rel="stylesheet">
-	
-	<script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
-	<script type="text/javascript">
-
-		function drawChart() {
-			google.charts.load('current', {'packages':['corechart']});
-		
-			<?php
-				if(!empty($incomesOfLoggedUser)) {
-					echo "google.charts.setOnLoadCallback(drawIncomesChart);";
-				}
-				
-				if(!empty($expensesOfLoggedUser)) {
-					echo "google.charts.setOnLoadCallback(drawExpensesChart);";
-				}
-			?>
-			
-			function drawIncomesChart() {
-
-				var incomesData = google.visualization.arrayToDataTable([
-					['Category', 'Amount'],
-					<?php
-						foreach ($incomesOfLoggedUser as $incomes) {
-						echo "['{$incomes['income_category']}', parseInt('{$incomes['SUM(i.income_amount)']}')],";
-						}
-					?>
-					]);
-
-				var incomesOptions = {
-					title: 'Source of Income',
-					colors: ['#00e64d', '#66ff99', '#b3ffcc'],
-					backgroundColor: { fill:'transparent' },
-					chartArea:{top:30,bottom:10,width:'100%',height:'100%'},
-					fontSize: 16
-				};
-
-				var incomesChart = new google.visualization.PieChart(document.getElementById('piechart1'));
-				incomesChart.draw(incomesData, incomesOptions);
-			}
-			
-			function drawExpensesChart() {
-
-				var expensesData = google.visualization.arrayToDataTable([
-					['Category', 'Amount'],
-					<?php
-						foreach ($expensesOfLoggedUser as $expenses) {
-						echo "['{$expenses['expense_category']}', parseInt('{$expenses['SUM(e.expense_amount)']}')],";
-						}
-					?>
-					]);
-
-				var expensesOptions = {
-					title: 'Spendings',
-					colors: ['#ff3333', '#ff6666', '#ffb3b3'],
-					backgroundColor: { fill:'transparent' },
-					chartArea:{top:30,bottom:10,width:'100%',height:'100%'},
-					fontSize: 16
-				};
-
-				var expensesChart = new google.visualization.PieChart(document.getElementById('piechart2'));
-				expensesChart.draw(expensesData, expensesOptions);
-			}
-		}
-	
-	</script>
 
 </head>
 
-<body onload="drawChart()" onresize="drawChart()">
+<body onload="drawChart(incomes, expenses)" onresize="drawChart(incomes, expenses)">
 	
 	<header>
 	
@@ -290,9 +230,9 @@ if(isset($_SESSION['loggedUserId'])) {
 								$totalIncomes = 0;
 								
 								foreach ($incomesOfLoggedUser as $incomes) {
-									echo "<tr class=\"summary\"><td class=\"category\">{$incomes['income_category']}</td><td class=\"sum\">{$incomes['SUM(i.income_amount)']} PLN</td></tr>";
+									echo "<tr class=\"summary\"><td class=\"category\">{$incomes['income_category']}</td><td class=\"sum\">{$incomes['income_amount']} PLN</td></tr>";
 									
-									$totalIncomes += $incomes['SUM(i.income_amount)'];
+									$totalIncomes += $incomes['income_amount'];
 									
 									$incomesTableRowsQuery = $db -> prepare(
 									"SELECT income_date, income_amount, income_comment
@@ -332,9 +272,9 @@ if(isset($_SESSION['loggedUserId'])) {
 								$totalExpenses = 0;
 								
 								foreach ($expensesOfLoggedUser as $expenses) {
-									echo "<tr class=\"summary\"><td class=\"category\">{$expenses['expense_category']}</td><td class=\"sum\">{$expenses['SUM(e.expense_amount)']} PLN</td></tr>";
+									echo "<tr class=\"summary\"><td class=\"category\">{$expenses['expense_category']}</td><td class=\"sum\">{$expenses['expense_amount']} PLN</td></tr>";
 									
-									$totalExpenses += $expenses['SUM(e.expense_amount)'];
+									$totalExpenses += $expenses['expense_amount'];
 									
 									$expensesTableRowsQuery = $db -> prepare(
 									"SELECT e.expense_date, e.expense_amount, pm.payment_method, e.expense_comment
@@ -438,11 +378,12 @@ if(isset($_SESSION['loggedUserId'])) {
 		
 	</footer>
 	
-	<script src="js/budget.js"></script>
+	<script src="budget.js"></script>
 	<script src="https://code.jquery.com/jquery-3.4.1.slim.min.js" integrity="sha384-J6qa4849blE2+poT4WnyKhv5vZF5SrPo0iEjwBvKU7imGFAV0wwj1yYfoRSJoZ+n" crossorigin="anonymous"></script>
 	<script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js" integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo" crossorigin="anonymous"></script>
 	<script src="js/bootstrap.min.js"></script>
 	<script src="js/jquery-3.4.1.min.js"></script>
+	<script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
 	
 </body>
 

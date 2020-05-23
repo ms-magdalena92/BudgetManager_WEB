@@ -19,24 +19,30 @@ if(isset($_SESSION['loggedUserId'])) {
 		}
 		
 		$expensesQuery = $db -> prepare(
-		"SELECT e.category_id, ec.expense_category, SUM(e.expense_amount)
+		"SELECT e.category_id, ec.expense_category, SUM(e.expense_amount) AS expense_amount
 		FROM expenses e NATURAL JOIN expense_categories ec
 		WHERE e.user_id=:loggedUserId AND e.expense_date BETWEEN :startDate AND :endDate
 		GROUP BY e.category_id
-		ORDER BY SUM(e.expense_amount) DESC");
+		ORDER BY expense_amount DESC");
 		$expensesQuery -> execute([':loggedUserId'=> $_SESSION['loggedUserId'], ':startDate'=> $startDate, ':endDate'=> $endDate]);
 		
 		$expensesOfLoggedUser = $expensesQuery -> fetchAll();
 		
 		$incomesQuery = $db -> prepare(
-		"SELECT i.category_id, ic.income_category, SUM(i.income_amount)
+		"SELECT i.category_id, ic.income_category, SUM(i.income_amount) AS income_amount
 		FROM incomes i NATURAL JOIN income_categories ic
 		WHERE i.user_id=:loggedUserId AND i.income_date BETWEEN :startDate AND :endDate
 		GROUP BY i.category_id
-		ORDER BY SUM(i.income_amount) DESC");
+		ORDER BY income_amount DESC");
 		$incomesQuery -> execute([':loggedUserId'=> $_SESSION['loggedUserId'], ':startDate'=> $startDate, ':endDate'=> $endDate]);
 		
 		$incomesOfLoggedUser = $incomesQuery -> fetchAll();
+		
+		echo "<script>
+				var incomes = ".json_encode($incomesOfLoggedUser).";
+				var expenses = ".json_encode($expensesOfLoggedUser)."
+			</script>";
+		
 	} else {
 		
 		header ("Location: menu.php");
@@ -47,7 +53,6 @@ if(isset($_SESSION['loggedUserId'])) {
 	header ("Location: index.php");
 	exit();
 }
-	
 ?>
 
 <!DOCTYPE html>
@@ -64,7 +69,6 @@ if(isset($_SESSION['loggedUserId'])) {
 	
 	<meta http-equiv="X-Ua-Compatible" content="IE=edge">
 	
-	<script src="https://code.jquery.com/jquery-3.4.1.slim.min.js" integrity="sha384-J6qa4849blE2+poT4WnyKhv5vZF5SrPo0iEjwBvKU7imGFAV0wwj1yYfoRSJoZ+n" crossorigin="anonymous"></script>
 	<link rel="stylesheet" href="css/bootstrap.min.css">
 	<link rel="stylesheet" href="css/main.css">
 	<link rel="stylesheet" href="css/fontello.css">
@@ -72,8 +76,7 @@ if(isset($_SESSION['loggedUserId'])) {
 
 </head>
 
-<!-- <body onload="pageLoad(); getCurrentDate()" onresize="pageResize()"> -->
-<body>
+<body onload="drawChart(incomes, expenses)" onresize="drawChart(incomes, expenses)">
 	
 	<header>
 	
@@ -227,9 +230,9 @@ if(isset($_SESSION['loggedUserId'])) {
 								$totalIncomes = 0;
 								
 								foreach ($incomesOfLoggedUser as $incomes) {
-									echo "<tr class=\"summary\"><td class=\"category\">{$incomes['income_category']}</td><td class=\"sum\">{$incomes['SUM(i.income_amount)']} PLN</td></tr>";
+									echo "<tr class=\"summary\"><td class=\"category\">{$incomes['income_category']}</td><td class=\"sum\">{$incomes['income_amount']} PLN</td></tr>";
 									
-									$totalIncomes += $incomes['SUM(i.income_amount)'];
+									$totalIncomes += $incomes['income_amount'];
 									
 									$incomesTableRowsQuery = $db -> prepare(
 									"SELECT income_date, income_amount, income_comment
@@ -269,9 +272,9 @@ if(isset($_SESSION['loggedUserId'])) {
 								$totalExpenses = 0;
 								
 								foreach ($expensesOfLoggedUser as $expenses) {
-									echo "<tr class=\"summary\"><td class=\"category\">{$expenses['expense_category']}</td><td class=\"sum\">{$expenses['SUM(e.expense_amount)']} PLN</td></tr>";
+									echo "<tr class=\"summary\"><td class=\"category\">{$expenses['expense_category']}</td><td class=\"sum\">{$expenses['expense_amount']} PLN</td></tr>";
 									
-									$totalExpenses += $expenses['SUM(e.expense_amount)'];
+									$totalExpenses += $expenses['expense_amount'];
 									
 									$expensesTableRowsQuery = $db -> prepare(
 									"SELECT e.expense_date, e.expense_amount, pm.payment_method, e.expense_comment
@@ -312,14 +315,15 @@ if(isset($_SESSION['loggedUserId'])) {
 				}
 			?>
 			
-			<div class="col-sm-8 col-lg-6 mt-4 mb-2 pt-2 pb-4 mx-auto box">
-				<div id="piechart1"></div>
-			</div>
-
-			<div class="col-sm-8 col-lg-6 my-3 pt-2 pb-4 mx-auto box">
-				<div id="piechart2"></div>
-			</div>
+			<?php
+				if(!empty($incomesOfLoggedUser)) {
+					echo '<div class="col-sm-8 col-lg-6 mt-4 mb-2 pt-2 pb-4 mx-auto box"><div id="piechart1"></div></div>';
+				}
 			
+				if(!empty($expensesOfLoggedUser)) {
+					echo '<div class="col-sm-8 col-lg-6 my-3 pt-2 pb-4 mx-auto box"><div id="piechart2"></div></div>';
+				}
+			?>
 		</section>
 		
 		<div class="modal fade" role='dialog' id="dateModal">
@@ -374,7 +378,8 @@ if(isset($_SESSION['loggedUserId'])) {
 		
 	</footer>
 	
-	<script src="js/budget.js"></script>
+	<script src="budget.js"></script>
+	<script src="https://code.jquery.com/jquery-3.4.1.slim.min.js" integrity="sha384-J6qa4849blE2+poT4WnyKhv5vZF5SrPo0iEjwBvKU7imGFAV0wwj1yYfoRSJoZ+n" crossorigin="anonymous"></script>
 	<script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js" integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo" crossorigin="anonymous"></script>
 	<script src="js/bootstrap.min.js"></script>
 	<script src="js/jquery-3.4.1.min.js"></script>

@@ -314,10 +314,11 @@
 			
 
 			<?php
-				if($totalIncomes - $totalExpenses >= 0) {
+				if($balance > 0) {
 					
 					echo '<div class="ml-3 text-success" id="result">Great!  You Manage Your Finances Very Well!</div>';
-				} else {
+				}
+				if ($balance < 0){
 					
 					echo '<div class="ml-3 text-danger" id="result">Watch Out! You Are Getting Into Debt!!</div>';
 				}

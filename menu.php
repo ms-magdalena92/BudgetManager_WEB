@@ -1,33 +1,35 @@
 <?php
-session_start();
+	session_start();
 
-require_once 'database.php';
+	require_once 'database.php';
 
-if(!isset($_SESSION['loggedUserId'])) {
-	
-	if(isset($_POST['email'])) {
-	
-		$email = filter_input(INPUT_POST, 'email', FILTER_SANITIZE_EMAIL);
-		$password = filter_input(INPUT_POST, 'password');
-	
-		$userQuery = $db -> prepare(
-		"SELECT user_id, password
-		FROM users
-		WHERE email = :email");
-		$userQuery->execute([':email'=> $email]);
+	if(!isset($_SESSION['loggedUserId'])) {
 		
-		$user = $userQuery -> fetch();
+		if(isset($_POST['email'])) {
+		
+			$email = filter_input(INPUT_POST, 'email', FILTER_SANITIZE_EMAIL);
+			$password = filter_input(INPUT_POST, 'password');
+		
+			$userQuery = $db -> prepare(
+			"SELECT user_id, password
+			FROM users
+			WHERE email = :email");
+			$userQuery->execute([':email'=> $email]);
+			
+			$user = $userQuery -> fetch();
 
-		if($user && password_verify($password, $user['password'])) {
-			$_SESSION['loggedUserId'] = $user['user_id'];
-			unset($_SESSION['badAttempt']);
-		} else {
-			$_SESSION['badAttempt'] = "";
-			header ('Location: login.php');
-			exit();
+			if($user && password_verify($password, $user['password'])) {
+				
+				$_SESSION['loggedUserId'] = $user['user_id'];
+				unset($_SESSION['badAttempt']);
+			} else {
+				
+				$_SESSION['badAttempt'] = "";
+				header ('Location: login.php');
+				exit();
+			}
 		}
 	}
-}
 ?>
 
 <!DOCTYPE html>
@@ -204,7 +206,7 @@ if(!isset($_SESSION['loggedUserId'])) {
 		
 	</footer>
 	
-	<script src="js/budget.js"></script>
+	<script src="budget.js"></script>
 	<script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js" integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo" crossorigin="anonymous"></script>
 	<script src="js/bootstrap.min.js"></script>
 	

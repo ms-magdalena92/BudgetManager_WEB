@@ -13,11 +13,13 @@
 		
 		$userName = $_POST['userName'];
 		if((strlen($userName) < 2) || (strlen($userName) > 20)) {
+			
 			$positiveValidation = false;
 			$_SESSION['nameError'] = "Name needs to be between 2 to 20 characters.";
 		}
 		
 		if(!preg_match('/^[A-ZĄĘÓŁŚŻŹĆŃa-ząęółśżźćń]+$/', $userName)) {
+			
 			$positiveValidation = false;
 			$_SESSION['nameError'] = "Name must contain letters only, special characters not allowed.";
 		}
@@ -26,19 +28,22 @@
 		$emailCheck = filter_var($email, FILTER_SANITIZE_EMAIL);
 		
 		if(filter_var($emailCheck, FILTER_VALIDATE_EMAIL) == false || $emailCheck != $email) {
+			
 			$positiveValidation = false;
-			$_SESSION['errorEmail'] = "Please enter a valid e-mail adress";
+			$_SESSION['emailError'] = "Please enter a valid e-mail adress";
 		}
 		
 		$password1 = $_POST['password'];
 		$password2 = $_POST['passwordConfirm'];
 		
 		if(strlen($password1) < 8 || strlen($password1) > 50) {
+			
 			$positiveValidation = false;
 			$_SESSION['passwordError'] = "Password needs to be between 8 to 50 characters.";
 		}
 		
 		if($password1 != $password2) {
+			
 			$positiveValidation = false;
 			$_SESSION['passwordError'] = "Password you have entered does not match.";
 		}
@@ -62,11 +67,13 @@
 		$isEmailUsed = $checkEmailQuery -> rowCount();
 		
 		if($isEmailUsed) {
+			
 			$positiveValidation = false;
 			$_SESSION['emailError'] = "An account with this e-mail adress already exists.";
 		}
 				
 		if($positiveValidation == true) {
+			
 			$addUserQuery = $db->prepare(
 			"INSERT INTO users
 			VALUES(NULL, :userName, :email, :passwordHash)");
@@ -150,6 +157,7 @@
 							</div>
 							<input class="form-control  userInput" type="text" name="userName" placeholder="name" value="<?php
 								if(isset($_SESSION['formName'])) {
+									
 									echo $_SESSION['formName'];
 									unset($_SESSION['formName']);
 								}
@@ -158,6 +166,7 @@
 						
 						<?php
 							if(isset($_SESSION['nameError'])) {
+								
 								echo '<div class="text-danger">'.$_SESSION['nameError'].'</div>';
 								unset($_SESSION['nameError']);
 							}
@@ -169,6 +178,7 @@
 							</div>
 							<input class="form-control  userInput" type="email" name="email" placeholder="email@address.com" value="<?php
 								if(isset($_SESSION['formEmail'])) {
+									
 									echo $_SESSION['formEmail'];
 									unset($_SESSION['formEmail']);
 								}
@@ -177,6 +187,7 @@
 						
 						<?php
 							if(isset($_SESSION['emailError'])) {
+								
 								echo '<div class="text-danger">'.$_SESSION['emailError'].'</div>';
 								unset($_SESSION['emailError']);
 							}
@@ -188,6 +199,7 @@
 							</div>
 							<input class="form-control  userInput" type="password" id="password1" name="password" placeholder="password" value="<?php
 								if(isset($_SESSION['formPassword1'])) {
+									
 									echo $_SESSION['formPassword1'];
 									unset($_SESSION['formPassword1']);
 								}
@@ -196,6 +208,7 @@
 						
 						<?php
 							if(isset($_SESSION['passwordError'])) {
+								
 								echo '<div class="text-danger">'.$_SESSION['passwordError'].'</div>';
 								unset($_SESSION['passwordError']);
 							}
@@ -237,6 +250,7 @@
 		
 		<?php
 			if($_SESSION['successfulRegistration'] == true) {
+				
 				echo "<script>$(document).ready(function(){ $('#registrationModal').modal('show'); });</script>
 
 					<div class='modal fade' id='registrationModal' role='dialog'>
@@ -274,7 +288,7 @@
 	</footer>
 	
 	<script src="js/bootstrap.min.js"></script>
-	<script src="js/budget.js"></script>
+	<script src="budget.js"></script>
 	<script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js" integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo" crossorigin="anonymous"></script>
 	
 </body>

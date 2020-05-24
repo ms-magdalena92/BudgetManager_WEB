@@ -1,58 +1,60 @@
 <?php
-session_start();
+	session_start();
 
-$startDate = 00-00-00;
-$endDate = 00-00-00;
+	$startDate = 00-00-00;
+	$endDate = 00-00-00;
 
-if(isset($_SESSION['loggedUserId'])) {
-	
-	require_once 'database.php';
-	
-	if(isset($_GET['userStartDate'])) {
+	if(isset($_SESSION['loggedUserId'])) {
 		
-		if($_GET['userStartDate'] > $_GET['userEndDate']) {
-			$startDate = $_GET['userEndDate'];
-			$endDate = $_GET['userStartDate'];
+		require_once 'database.php';
+		
+		if(isset($_GET['userStartDate'])) {
+			
+			if($_GET['userStartDate'] > $_GET['userEndDate']) {
+				
+				$startDate = $_GET['userEndDate'];
+				$endDate = $_GET['userStartDate'];
+			} else {
+				
+				$startDate = $_GET['userStartDate'];
+				$endDate = $_GET['userEndDate'];
+			}
+			
+			$expensesQuery = $db -> prepare(
+			"SELECT e.category_id, ec.expense_category, SUM(e.expense_amount) AS expense_amount
+			FROM expenses e NATURAL JOIN expense_categories ec
+			WHERE e.user_id=:loggedUserId AND e.expense_date BETWEEN :startDate AND :endDate
+			GROUP BY e.category_id
+			ORDER BY expense_amount DESC");
+			$expensesQuery -> execute([':loggedUserId'=> $_SESSION['loggedUserId'], ':startDate'=> $startDate, ':endDate'=> $endDate]);
+			
+			$expensesOfLoggedUser = $expensesQuery -> fetchAll();
+			
+			$incomesQuery = $db -> prepare(
+			"SELECT i.category_id, ic.income_category, SUM(i.income_amount) AS income_amount
+			FROM incomes i NATURAL JOIN income_categories ic
+			WHERE i.user_id=:loggedUserId AND i.income_date BETWEEN :startDate AND :endDate
+			GROUP BY i.category_id
+			ORDER BY income_amount DESC");
+			$incomesQuery -> execute([':loggedUserId'=> $_SESSION['loggedUserId'], ':startDate'=> $startDate, ':endDate'=> $endDate]);
+			
+			$incomesOfLoggedUser = $incomesQuery -> fetchAll();
+			
+			echo "<script>
+					var incomes = ".json_encode($incomesOfLoggedUser).";
+					var expenses = ".json_encode($expensesOfLoggedUser)."
+				</script>";
+			
 		} else {
-			$startDate = $_GET['userStartDate'];
-			$endDate = $_GET['userEndDate'];
+			
+			header ("Location: menu.php");
+			exit();
 		}
-		
-		$expensesQuery = $db -> prepare(
-		"SELECT e.category_id, ec.expense_category, SUM(e.expense_amount) AS expense_amount
-		FROM expenses e NATURAL JOIN expense_categories ec
-		WHERE e.user_id=:loggedUserId AND e.expense_date BETWEEN :startDate AND :endDate
-		GROUP BY e.category_id
-		ORDER BY expense_amount DESC");
-		$expensesQuery -> execute([':loggedUserId'=> $_SESSION['loggedUserId'], ':startDate'=> $startDate, ':endDate'=> $endDate]);
-		
-		$expensesOfLoggedUser = $expensesQuery -> fetchAll();
-		
-		$incomesQuery = $db -> prepare(
-		"SELECT i.category_id, ic.income_category, SUM(i.income_amount) AS income_amount
-		FROM incomes i NATURAL JOIN income_categories ic
-		WHERE i.user_id=:loggedUserId AND i.income_date BETWEEN :startDate AND :endDate
-		GROUP BY i.category_id
-		ORDER BY income_amount DESC");
-		$incomesQuery -> execute([':loggedUserId'=> $_SESSION['loggedUserId'], ':startDate'=> $startDate, ':endDate'=> $endDate]);
-		
-		$incomesOfLoggedUser = $incomesQuery -> fetchAll();
-		
-		echo "<script>
-				var incomes = ".json_encode($incomesOfLoggedUser).";
-				var expenses = ".json_encode($expensesOfLoggedUser)."
-			</script>";
-		
 	} else {
-		
-		header ("Location: menu.php");
+
+		header ("Location: index.php");
 		exit();
 	}
-} else {
-
-	header ("Location: index.php");
-	exit();
-}
 ?>
 
 <!DOCTYPE html>
@@ -230,6 +232,7 @@ if(isset($_SESSION['loggedUserId'])) {
 								$totalIncomes = 0;
 								
 								foreach ($incomesOfLoggedUser as $incomes) {
+									
 									echo "<tr class=\"summary\"><td class=\"category\">{$incomes['income_category']}</td><td class=\"sum\">{$incomes['income_amount']} PLN</td></tr>";
 									
 									$totalIncomes += $incomes['income_amount'];
@@ -244,6 +247,7 @@ if(isset($_SESSION['loggedUserId'])) {
 									$incomesOfSpecificCategory = $incomesTableRowsQuery -> fetchAll();
 									
 									foreach ($incomesOfSpecificCategory as $categoryIncome) {
+										
 										echo "<tr><td class=\"date\">{$categoryIncome['income_date']}</td><td class=\"amount\">{$categoryIncome['income_amount']} PLN</td><td class=\"comment\">{$categoryIncome['income_comment']}</td></tr>";
 									}
 								}
@@ -272,6 +276,7 @@ if(isset($_SESSION['loggedUserId'])) {
 								$totalExpenses = 0;
 								
 								foreach ($expensesOfLoggedUser as $expenses) {
+									
 									echo "<tr class=\"summary\"><td class=\"category\">{$expenses['expense_category']}</td><td class=\"sum\">{$expenses['expense_amount']} PLN</td></tr>";
 									
 									$totalExpenses += $expenses['expense_amount'];
@@ -286,6 +291,7 @@ if(isset($_SESSION['loggedUserId'])) {
 									$expensesOfSpecificCategory = $expensesTableRowsQuery -> fetchAll();
 									
 									foreach ($expensesOfSpecificCategory as $categoryExpense) {
+										
 										echo "<tr><td class=\"date\">{$categoryExpense['expense_date']}</td><td class=\"amount\">{$categoryExpense['expense_amount']} PLN</td><td class=\"payment\">{$categoryExpense['payment_method']}</td><td class=\"comment\">{$categoryExpense['expense_comment']}</td></tr>";
 									}
 								}
@@ -309,18 +315,22 @@ if(isset($_SESSION['loggedUserId'])) {
 
 			<?php
 				if($totalIncomes - $totalExpenses >= 0) {
+					
 					echo '<div class="ml-3 text-success" id="result">Great!  You Manage Your Finances Very Well!</div>';
 				} else {
+					
 					echo '<div class="ml-3 text-danger" id="result">Watch Out! You Are Getting Into Debt!!</div>';
 				}
 			?>
 			
 			<?php
 				if(!empty($incomesOfLoggedUser)) {
+					
 					echo '<div class="col-sm-8 col-lg-6 mt-4 mb-2 pt-2 pb-4 mx-auto box"><div id="piechart1"></div></div>';
 				}
 			
 				if(!empty($expensesOfLoggedUser)) {
+					
 					echo '<div class="col-sm-8 col-lg-6 my-3 pt-2 pb-4 mx-auto box"><div id="piechart2"></div></div>';
 				}
 			?>

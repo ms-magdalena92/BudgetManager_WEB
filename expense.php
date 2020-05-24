@@ -1,81 +1,82 @@
 <?php
-session_start();
+	session_start();
 
-if(isset($_SESSION['loggedUserId'])) {
-	require_once 'database.php';
-	
-	$expenseCategoryQuery = $db -> prepare(
-	"SELECT ec.expense_category
-	FROM expense_categories ec NATURAL JOIN user_expense_category uec
-	WHERE uec.user_id = :loggedUserId");
-	$expenseCategoryQuery -> execute([':loggedUserId'=> $_SESSION['loggedUserId']]);
-	
-	$expenseCategoriesOfLoggedUser = $expenseCategoryQuery -> fetchAll();
-	
-	$paymentMethodQuery = $db -> prepare(
-	"SELECT pm.payment_method
-	FROM payment_methods pm NATURAL JOIN user_payment_method upm
-	WHERE upm.user_id = :loggedUserId");
-	$paymentMethodQuery -> execute([':loggedUserId'=> $_SESSION['loggedUserId']]);
-	
-	$paymentMethodsOfLoggedUser = $paymentMethodQuery -> fetchAll();
-	
-	$_SESSION['expenseAdded'] = false;
-	
-	if(isset($_POST['expenseAmount'])) {
+	if(isset($_SESSION['loggedUserId'])) {
+		require_once 'database.php';
 		
-		if(!empty($_POST['expenseAmount'])) {
-				
-			$positiveValidation = true;
+		$expenseCategoryQuery = $db -> prepare(
+		"SELECT ec.expense_category
+		FROM expense_categories ec NATURAL JOIN user_expense_category uec
+		WHERE uec.user_id = :loggedUserId");
+		$expenseCategoryQuery -> execute([':loggedUserId'=> $_SESSION['loggedUserId']]);
+		
+		$expenseCategoriesOfLoggedUser = $expenseCategoryQuery -> fetchAll();
+		
+		$paymentMethodQuery = $db -> prepare(
+		"SELECT pm.payment_method
+		FROM payment_methods pm NATURAL JOIN user_payment_method upm
+		WHERE upm.user_id = :loggedUserId");
+		$paymentMethodQuery -> execute([':loggedUserId'=> $_SESSION['loggedUserId']]);
+		
+		$paymentMethodsOfLoggedUser = $paymentMethodQuery -> fetchAll();
+		
+		$_SESSION['expenseAdded'] = false;
+		
+		if(isset($_POST['expenseAmount'])) {
 			
-			$expenseAmount = number_format($_POST['expenseAmount'], 2, '.', '');
-			$expenseAmount = number_format($_POST['expenseAmount'], 2, '.', '');
-			$amount = explode('.', $expenseAmount);
-				
-			if(!is_numeric($expenseAmount) || strlen($expenseAmount) > 9 || $expenseAmount < 0 || !(isset($amount[1]) && strlen($amount[1]) == 2)) {
+			if(!empty($_POST['expenseAmount'])) {
 					
-				$_SESSION['expenseAmountError'] = "Enter valid positive amount - maximum 6 integer digits and 2 decimal places.";
-				$positiveValidation = false;
-			}
-			
-			$expenseComment = $_POST['expenseComment'];
-			
-			if(!empty($expenseComment) && !preg_match('/^[A-ZĄĘÓŁŚŻŹĆŃa-ząęółśżźćń 0-9]+$/', $expenseComment)) {
-				$_SESSION['commentError'] = "Comment can contain up to 100 characters - only letters and numbers allowed.";
-				$positiveValidation = false;
-			}
-			
-			
-			$_SESSION['formExpenseAmount'] = $expenseAmount;
-			$_SESSION['formExpenseDate'] = $_POST['expenseDate'];
-			$_SESSION['formExpensePaymentMethod'] = $_POST['expensePaymentMethod'];
-			$_SESSION['formExpenseCategory'] = $_POST['expenseCategory'];
-			$_SESSION['formExpenseComment'] = $expenseComment;
-		
-			if($positiveValidation == true) {
-
-				$addExpenseQuery = $db->prepare(
-				"INSERT INTO expenses
-				VALUES (NULL, :userId, :expenseAmount, :expenseDate,
-				(SELECT payment_method_id FROM payment_methods
-				WHERE payment_method=:expensePaymentMethod),
-				(SELECT category_id FROM expense_categories
-				WHERE expense_category=:expenseCategory),
-				:expenseComment)");
-				$addExpenseQuery -> execute([':userId' => $_SESSION['loggedUserId'], ':expenseAmount' => $expenseAmount, ':expenseDate' => $_POST['expenseDate'], ':expensePaymentMethod' => $_POST['expensePaymentMethod'], ':expenseCategory' => $_POST['expenseCategory'], ':expenseComment' => $expenseComment]);
+				$positiveValidation = true;
 				
-				$_SESSION['expenseAdded'] = true;
+				$expenseAmount = number_format($_POST['expenseAmount'], 2, '.', '');
+				$amount = explode('.', $expenseAmount);
+					
+				if(!is_numeric($expenseAmount) || strlen($expenseAmount) > 9 || $expenseAmount < 0 || !(isset($amount[1]) && strlen($amount[1]) == 2)) {
+						
+					$_SESSION['expenseAmountError'] = "Enter valid positive amount - maximum 6 integer digits and 2 decimal places.";
+					$positiveValidation = false;
+				}
+				
+				$expenseComment = $_POST['expenseComment'];
+				
+				if(!empty($expenseComment) && !preg_match('/^[A-ZĄĘÓŁŚŻŹĆŃa-ząęółśżźćń 0-9]+$/', $expenseComment)) {
+					
+					$_SESSION['commentError'] = "Comment can contain up to 100 characters - only letters and numbers allowed.";
+					$positiveValidation = false;
+				}
+				
+				
+				$_SESSION['formExpenseAmount'] = $expenseAmount;
+				$_SESSION['formExpenseDate'] = $_POST['expenseDate'];
+				$_SESSION['formExpensePaymentMethod'] = $_POST['expensePaymentMethod'];
+				$_SESSION['formExpenseCategory'] = $_POST['expenseCategory'];
+				$_SESSION['formExpenseComment'] = $expenseComment;
+			
+				if($positiveValidation == true) {
+
+					$addExpenseQuery = $db->prepare(
+					"INSERT INTO expenses
+					VALUES (NULL, :userId, :expenseAmount, :expenseDate,
+					(SELECT payment_method_id FROM payment_methods
+					WHERE payment_method=:expensePaymentMethod),
+					(SELECT category_id FROM expense_categories
+					WHERE expense_category=:expenseCategory),
+					:expenseComment)");
+					$addExpenseQuery -> execute([':userId' => $_SESSION['loggedUserId'], ':expenseAmount' => $expenseAmount, ':expenseDate' => $_POST['expenseDate'], ':expensePaymentMethod' => $_POST['expensePaymentMethod'], ':expenseCategory' => $_POST['expenseCategory'], ':expenseComment' => $expenseComment]);
+					
+					$_SESSION['expenseAdded'] = true;
+				}
+			} else {
+				
+					$_SESSION['emptyFieldError'] = "Please fill in all required fields.";
+					$_SESSION['expenseAmountError'] = "Amount of an expense required.";
 			}
-		} else {
-				$_SESSION['emptyFieldError'] = "Please fill in all required fields.";
-				$_SESSION['expenseAmountError'] = "Amount of an expense required.";
 		}
+	} else {
+		
+		header ("Location: index.php");
+		exit();
 	}
-} else {
-	
-	header ("Location: index.php");
-}
-	
 ?>
 
 <!DOCTYPE html>
@@ -92,7 +93,7 @@ if(isset($_SESSION['loggedUserId'])) {
 	
 	<meta http-equiv="X-Ua-Compatible" content="IE=edge">
 	
-	<script src="js/budget.js"></script>
+	<script src="budget.js"></script>
 	<script src="https://code.jquery.com/jquery-3.4.1.slim.min.js" integrity="sha384-J6qa4849blE2+poT4WnyKhv5vZF5SrPo0iEjwBvKU7imGFAV0wwj1yYfoRSJoZ+n" crossorigin="anonymous"></script>
 	<link rel="stylesheet" href="css/bootstrap.min.css">
 	<link rel="stylesheet" href="css/main.css">
@@ -207,6 +208,7 @@ if(isset($_SESSION['loggedUserId'])) {
 					
 						<?php
 							if(isset($_SESSION['emptyFieldError'])) {
+								
 								echo '<div class="text-danger">'.$_SESSION['emptyFieldError'].'</div>';
 								unset($_SESSION['emptyFieldError']);
 							}
@@ -218,6 +220,7 @@ if(isset($_SESSION['loggedUserId'])) {
 							</div>
 							<input class="form-control userInput labeledInput" type="number" name="expenseAmount" step="0.01" value="<?php
 								if(isset($_SESSION['formExpeseAmount'])) {
+									
 									echo $_SESSION['formExpeseAmount'];
 									unset($_SESSION['formExpeseAmount']);
 								}
@@ -226,6 +229,7 @@ if(isset($_SESSION['loggedUserId'])) {
 						
 						<?php
 							if(isset($_SESSION['expenseAmountError'])) {
+								
 								echo '<div class="text-danger">'.$_SESSION['expenseAmountError'].'</div>';
 								unset($_SESSION['expenseAmountError']);
 							}
@@ -238,12 +242,14 @@ if(isset($_SESSION['loggedUserId'])) {
 							
 							<?php
 							if(!isset($_SESSION['formExpenseDate'])) {
+								
 									echo "<script>$(document).ready(function(){getCurrentDate();})</script>";
 								}
 							?>
 							
 							<input class="form-control  userInput labeledInput" type="date" name="expenseDate" id="dateInput" value="<?php
 								if(isset($_SESSION['formExpenseDate'])) {
+									
 									echo $_SESSION['formExpenseDate'];
 									unset($_SESSION['formExpenseDate']);
 								}
@@ -307,6 +313,7 @@ if(isset($_SESSION['loggedUserId'])) {
 						
 						<?php
 							if(isset($_SESSION['commentError'])) {
+								
 								echo '<div class="text-danger">'.$_SESSION['commentError'].'</div>';
 								unset($_SESSION['commentError']);
 							}
@@ -374,7 +381,8 @@ if(isset($_SESSION['loggedUserId'])) {
 		</div>
 		
 		<?php
-			if($_SESSION['expenseAdded'] == true){
+			if($_SESSION['expenseAdded']){
+				
 				echo "<script>$(document).ready(function(){ $('#expenseAdded').modal('show'); });</script>
 
 				<div class='modal fade' id='expenseAdded' role='dialog'>

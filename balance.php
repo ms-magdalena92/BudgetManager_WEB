@@ -83,7 +83,7 @@
 	<header>
 	
 		<h1 class="mt-3 mb-1" id="title">
-			<a id="homeButton" href="index.php" role="button">Welcome to <span id="logo">MyBudget</span>.com!</a>
+			<a id="homeButton" href="index.php" role="button"><span id="logo">myBudget</span>.com</a>
 		</h1>
 		
 		<p id="subtitle">Your Personal Finance Manager</p>
@@ -314,10 +314,11 @@
 			
 
 			<?php
-				if($totalIncomes - $totalExpenses >= 0) {
+				if($balance > 0) {
 					
 					echo '<div class="ml-3 text-success" id="result">Great!  You Manage Your Finances Very Well!</div>';
-				} else {
+				}
+				if ($balance < 0){
 					
 					echo '<div class="ml-3 text-danger" id="result">Watch Out! You Are Getting Into Debt!!</div>';
 				}

@@ -2,7 +2,7 @@
 	session_start();
 
 	require_once 'database.php';
-
+	
 	if(!isset($_SESSION['loggedUserId'])) {
 		
 		if(isset($_POST['email'])) {
@@ -11,7 +11,7 @@
 			$password = filter_input(INPUT_POST, 'password');
 		
 			$userQuery = $db -> prepare(
-			"SELECT user_id, password
+			"SELECT user_id, password, username
 			FROM users
 			WHERE email = :email");
 			$userQuery->execute([':email'=> $email]);
@@ -21,7 +21,9 @@
 			if($user && password_verify($password, $user['password'])) {
 				
 				$_SESSION['loggedUserId'] = $user['user_id'];
+				$_SESSION['username'] = $user['username'];
 				unset($_SESSION['badAttempt']);
+				
 			} else {
 				
 				$_SESSION['badAttempt'] = "";
@@ -59,7 +61,7 @@
 	<header>
 	
 		<h1 class="mt-3 mb-1" id="title">
-			<a id="homeButton" href="index.php" role="button">Welcome to <span id="logo">MyBudget</span>.com!</a>
+			<a id="homeButton" href="index.php" role="button"><span id="logo">myBudget</span>.com</a>
 		</h1>
 		
 		<p id="subtitle">Your Personal Finance Manager</p>
@@ -149,6 +151,8 @@
 		</section>
 		
 		<section class="container-fluid square">
+		
+			<h2 class="pt-4 mx-2">Hello <?php echo $_SESSION['username']; ?> !</h2>
 		
 			<img class="img-fluid" src="css/img/menuBG.png" alt="" />
 		

@@ -9,6 +9,7 @@
 	<meta name="description" content="Track your income and expenses - avoid overspending!">
 	<meta name="keywords" content="expense manager, budget planner, expense tracker, budgeting app, money manager, money management, personal finance management software, finance manager, saving planner">
 	<meta name="author" content="Magdalena Słomiany">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
 	
 	<meta http-equiv="X-Ua-Compatible" content="IE=edge">
 	
